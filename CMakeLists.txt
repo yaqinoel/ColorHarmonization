@@ -1,8 +1,6 @@
 cmake_minimum_required(VERSION 3.20)
 project(Color_Harmonization)
 
-set(CMAKE_CXX_STANDARD 17)
-
 add_library(stb INTERFACE)
 
 target_include_directories(stb
@@ -12,7 +10,7 @@ target_include_directories(stb
 
 add_executable(color_harmonizer
     app/main.cpp
-    src/image/StbImplementation.cpp
+        src/color_harmonization/image/StbImplementation.cpp
 )
 
 target_include_directories(color_harmonizer

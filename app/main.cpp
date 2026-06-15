@@ -1,30 +1,27 @@
 #include <iostream>
-#include <stb_image.h>
+
+#include <color_harmonization/image/Image.hpp>
+#include "color_harmonization/image/Pixel.hpp"
 
 
 int main() {
-    int width = 0;
-    int height = 0;
-    int channels = 0;
-    constexpr int desired_channels = 3;
+    using ColorHarmonization::Image;
+    using ColorHarmonization::Rgb8;
 
-    unsigned char* data = stbi_load("./assets/input/lena.png", &width, &height, &channels, 0);
+    Image<Rgb8> image(3, 2);
 
-    if (data == NULL) {
-        std::cerr
-            << "Failed to load image: "
-            << stbi_failure_reason()
-            << std::endl;
-        return 1;
-    }
+    image.at(1, 0) = Rgb8{255, 128, 0};
+
+    const Rgb8& pixel = image.at(1, 0);
 
     std::cout
-        << "Width:" << width
-        << ", Height:" << height
-        << ", original channels:" << channels
-        << std::endl;
+        << "Width: " << image.width()
+        << ", Height: " << image.height()
+        << '\n';
 
-    stbi_image_free(data);
-
-    return 0;
+    std::cout
+        << "Pixel: "
+        << static_cast<int>(pixel.r) << ", "
+        << static_cast<int>(pixel.g) << ", "
+        << static_cast<int>(pixel.b) << '\n';
 }
