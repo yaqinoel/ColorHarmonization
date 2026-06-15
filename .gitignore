@@ -1,0 +1,49 @@
+# CLion / JetBrains IDE metadata
+/.idea/
+
+# CMake build directories
+/cmake-build-*/
+/build/
+/out/
+
+# CMake generated files from in-source builds
+/CMakeCache.txt
+/CMakeFiles/
+/cmake_install.cmake
+/CTestTestfile.cmake
+/Makefile
+/compile_commands.json
+/Testing/
+
+# Compiled binaries and libraries
+*.o
+*.obj
+*.a
+*.lib
+*.so
+*.so.*
+*.dylib
+*.dll
+*.exe
+*.out
+*.app/
+
+# Debugging, profiling, and coverage output
+*.dSYM/
+*.gcda
+*.gcno
+*.gcov
+*.profraw
+*.profdata
+
+# macOS metadata
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Editor temporary files
+*.swp
+*.swo
+*~
+
+Plan.md
