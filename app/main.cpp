@@ -1,27 +1,27 @@
 #include <iostream>
 
 #include <color_harmonization/image/Image.hpp>
-#include "color_harmonization/image/Pixel.hpp"
+#include <color_harmonization/image/Pixel.hpp>
+#include <color_harmonization/image/ImageIO.hpp>
 
 
 int main() {
     using ColorHarmonization::Image;
     using ColorHarmonization::Rgb8;
 
-    Image<Rgb8> image(3, 2);
+    try {
+        auto image = ColorHarmonization::ImageIO::loadRgb("assets/input/lena.png");
 
-    image.at(1, 0) = Rgb8{255, 128, 0};
+        std::cout << "loaded image..." << std::endl;
 
-    const Rgb8& pixel = image.at(1, 0);
+        ColorHarmonization::ImageIO::savePng("assets/output/lena_copy.png", image);
 
-    std::cout
-        << "Width: " << image.width()
-        << ", Height: " << image.height()
-        << '\n';
+        std::cout << "saved image..." << std::endl;
 
-    std::cout
-        << "Pixel: "
-        << static_cast<int>(pixel.r) << ", "
-        << static_cast<int>(pixel.g) << ", "
-        << static_cast<int>(pixel.b) << '\n';
+    } catch (const std::exception& e) {
+        std::cerr << e.what() << std::endl;
+        return 1;
+    }
+
+    return 0;
 }
