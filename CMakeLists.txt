@@ -12,6 +12,7 @@ add_executable(color_harmonizer
         app/main.cpp
         src/color_harmonization/image/StbImplementation.cpp
         src/color_harmonization/image/ImageIO.cpp
+        src/color_harmonization/color/ColorConversion.cpp
 )
 
 target_include_directories(color_harmonizer
