@@ -15,7 +15,7 @@ namespace ColorHarmonization::color {
     Image<Hsv32f> rgbToHsv(const Image<Rgb8>& imageRgb);
 
     [[nodiscard]]
-    Image<Rgb8> HsvToRgb(const Image<Hsv32f>& imageHsv);
+    Image<Rgb8> hsvToRgb(const Image<Hsv32f>& imageHsv);
 
 
 }

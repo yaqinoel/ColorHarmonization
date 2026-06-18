@@ -3,6 +3,7 @@
 #include <color_harmonization/image/Image.hpp>
 #include <color_harmonization/image/Pixel.hpp>
 #include <color_harmonization/image/ImageIO.hpp>
+#include <color_harmonization/color/ColorConversion.hpp>
 
 
 int main() {
@@ -14,9 +15,14 @@ int main() {
 
         std::cout << "loaded image..." << std::endl;
 
-        ColorHarmonization::ImageIO::savePng("assets/output/lena_copy.png", image);
+        auto hsv = ColorHarmonization::color::rgbToHsv(image);
+        std::cout << "convert rgb image to hsv..." << std::endl;
 
-        std::cout << "saved image..." << std::endl;
+        auto roundtrip = ColorHarmonization::color::hsvToRgb(hsv);
+        std::cout << "convert hsv image to rgb..." << std::endl;
+
+        ColorHarmonization::ImageIO::savePng("assets/output/lena_roundtrip.png",roundtrip);
+        std::cout << "svade image..." << std::endl;
 
     } catch (const std::exception& e) {
         std::cerr << e.what() << std::endl;
