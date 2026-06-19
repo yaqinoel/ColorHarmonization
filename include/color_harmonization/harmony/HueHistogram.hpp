@@ -1,12 +1,13 @@
 #pragma once
 #include <vector>
+#include <cstddef>
 
 #include <color_harmonization/image/Pixel.hpp>
 #include <color_harmonization/image/Image.hpp>
 
 namespace ColorHarmonization::harmony {
 
-    struct hueHistogramOptions {
+    struct HueHistogramOptions {
         std::size_t binCount = 360;
         float saturationThreshold = 0.01f;
         bool normalize = true;
@@ -17,7 +18,7 @@ namespace ColorHarmonization::harmony {
         explicit HueHistogram(std::size_t binCount);
 
         [[nodiscard]]
-        static HueHistogram fromImage(const Image<Hsv32f>& image, const hueHistogramOptions& options = {});
+        static HueHistogram fromImage(const Image<Hsv32f>& image, const HueHistogramOptions& options = {});
 
         [[nodiscard]]
         std::size_t binCount() const noexcept;

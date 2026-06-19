@@ -1,4 +1,6 @@
 #include <algorithm>
+#include <stdexcept>
+#include <cmath>
 
 #include <color_harmonization/harmony/HueHistogram.hpp>
 
@@ -20,8 +22,25 @@ namespace ColorHarmonization::harmony {
     }
 
     [[nodiscard]]
-    static HueHistogram HueHistogram::fromImage(const Image<Hsv32f>& image) {
+    HueHistogram HueHistogram::fromImage(const Image<Hsv32f>& image,const HueHistogramOptions& options) {
+        HueHistogram histogram = HueHistogram(options.binCount);
 
+        for (std::size_t y = 0; y < image.height(); ++y) {
+            for (std::size_t x = 0; x < image.width(); ++x) {
+                const Hsv32f& pixel = image.at(x,y);
+                if (pixel.s < options.saturationThreshold) {
+                    continue;
+                }
+                const std::size_t bin = histogram.binForHue(pixel.h);
+                histogram.addForBin(bin, pixel.s * pixel.v);
+            }
+        }
+
+        if (options.normalize) {
+            histogram.normalize();
+        }
+
+        return histogram;
     }
 
     [[nodiscard]]
@@ -31,20 +50,52 @@ namespace ColorHarmonization::harmony {
 
     [[nodiscard]]
     float HueHistogram::valueAt(std::size_t bin) const {
-
+        // return bins_.at(bin);
+        const std::size_t count = binCount();
+        if ( bin >= count) {
+            throw std::out_of_range(
+                "Hue histogram bin index is out of range"
+            );
+        }
+        return bins_[bin];
     }
 
     [[nodiscard]]
     float HueHistogram::angleAt(std::size_t bin) const {
-
+        const std::size_t count = binCount();
+        if ( bin >= count) {
+            throw std::out_of_range(
+                "Hue histogram bin index is out of range"
+            );
+        }
+        return (static_cast<float>(bin) + 0.5f) * 360.0f / static_cast<float>(count);
     }
 
     void HueHistogram::addForBin(std::size_t bin, float weight) {
-
+        // bins_.at(bin) += weight;
+        const std::size_t count = binCount();
+        if ( bin >= count) {
+            throw std::out_of_range(
+                "Hue histogram bin index is out of range"
+            );
+        }
+        bins_[bin] += weight;
     }
 
     void HueHistogram::normalize() {
+        float sum = 0.0f;
 
+        for (const float value : bins_) {
+            sum += value;
+        }
+
+        if (sum == 0.0f) {
+            return;
+        }
+
+        for (float& value : bins_) {
+            value /= sum;
+        }
     }
 
     std::size_t HueHistogram::binForHue(float hue) const {
