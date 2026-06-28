@@ -1,6 +1,9 @@
 #include <algorithm>
 #include <stdexcept>
 #include <cmath>
+#include <fstream>
+#include <iostream>
+#include <ostream>
 
 #include <color_harmonization/harmony/HueHistogram.hpp>
 
@@ -98,6 +101,25 @@ namespace ColorHarmonization::harmony {
         }
     }
 
+    void HueHistogram::outputData(std::ostream& stream) const {
+        stream << "Bin_Count: " <<  binCount() << std::endl;
+        stream << "bin, angle, value" << std::endl;
+        for (std::size_t bin = 0; bin < binCount(); ++bin) {
+            stream << bin << ", " << angleAt(bin) << ", " << valueAt(bin) << std::endl;
+        }
+    }
+
+    void HueHistogram::saveData(const std::filesystem::path& path) const {
+        std::ofstream file(path);
+        if (!file) {
+            throw std::runtime_error( "Failed to open histogram output file: " + path.string() );
+        }
+        outputData(file);
+        std::cout << "Saved file to " + path.string() << "!" << std::endl;
+    }
+
+
+    [[nodiscard]]
     std::size_t HueHistogram::binForHue(float hue) const {
         hue = std::fmod(hue, 360.0f);
         if (hue < 0.0F) {

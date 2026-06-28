@@ -1,6 +1,8 @@
 #pragma once
 #include <vector>
 #include <cstddef>
+#include <filesystem>
+#include <iosfwd>
 
 #include <color_harmonization/image/Pixel.hpp>
 #include <color_harmonization/image/Image.hpp>
@@ -33,7 +35,12 @@ namespace ColorHarmonization::harmony {
 
         void normalize();
 
+        void outputData(std::ostream& stream) const;
+
+        void saveData(const std::filesystem::path& path) const;
+
     private:
+        [[nodiscard]]
         std::size_t binForHue(float hue) const;
         std::vector<float> bins_;
     };

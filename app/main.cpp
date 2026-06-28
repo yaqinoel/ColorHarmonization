@@ -26,18 +26,7 @@ int main() {
     options.saturationThreshold = 0.01f;
 
     const auto histogram = HueHistogram::fromImage(testImage, options);
-
-    for (std::size_t bin = 0; bin < histogram.binCount(); ++bin) {
-        const float value = histogram.valueAt(bin);
-
-        if (value > 0.0F) {
-            std::cout
-                << "bin=" << bin
-                << ", angle=" << histogram.angleAt(bin)
-                << ", value=" << value
-                << '\n';
-        }
-    }
+    histogram.outputData(std::cout);
 
     try {
         auto image = ColorHarmonization::ImageIO::loadRgb("assets/input/lena.png");
