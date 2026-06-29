@@ -1,4 +1,8 @@
 #include <utility>
+#include <algorithm>
+#include <cmath>
+#include <limits>
+
 #include <color_harmonization/harmony/HarmonyTemplate.hpp>
 
 namespace ColorHarmonization::harmony {
@@ -92,6 +96,66 @@ namespace ColorHarmonization::harmony {
                 }
             }
         };
+    }   // build default template
+
+    float normalizeHue(float angle) {
+        angle = std::fmod(angle, 360.f);
+        if (angle < 0) {
+            angle += 360.f;
+        }
+        return angle;
+    }
+
+    float circularDistance(float a, float b) {
+        const float normalizedA = normalizeHue(a);
+        const float normalizedB = normalizeHue(b);
+
+        const float difference = std::fabs(normalizedA - normalizedB);
+
+        return std::min(difference, 360.0f - difference);
+    }
+
+    float distanceToTemplate(float hue, const HarmonyTemplate& harmonyTemplate, float rotationDegrees) {
+        if (harmonyTemplate.sectors().empty()) {
+            throw std::invalid_argument("Harmony template must contain sectors");
+        }
+
+        const auto& sectors = harmonyTemplate.sectors();
+        const float targetHue = normalizeHue(hue);
+
+        float minDistance = std::numeric_limits<float>::max();
+        float currentDistance = 0.0f;
+
+        for (const auto& sector : sectors) {
+            const float shiftedCenter = sector.center + rotationDegrees;
+            const float halfWidth = sector.width / 2.0f;
+
+            float distanceToCenter = circularDistance(targetHue, shiftedCenter);
+            if (distanceToCenter <= halfWidth) {
+                return 0.0F;
+            }
+
+            currentDistance = distanceToCenter - halfWidth;
+
+            if (currentDistance < minDistance) {
+                minDistance = currentDistance;
+            }
+        }
+
+        return minDistance;
+    }   // distanceToTemplate
+
+    float templateCost(const HueHistogram& histogram,const HarmonyTemplate& harmonyTemplate, float rotationDegrees) {
+        float cost = 0.0f;
+        for (std::size_t bin = 0; bin < histogram.binCount(); ++bin) {
+            const float hue = histogram.angleAt(bin);
+            const float weight = histogram.valueAt(bin);
+            const float distance = distanceToTemplate(hue, harmonyTemplate, rotationDegrees);
+
+            cost += weight * distance;
+        }
+
+        return cost;
     }
 
 }

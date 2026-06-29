@@ -2,6 +2,8 @@
 #include <vector>
 #include <string_view>
 
+#include <color_harmonization/harmony/HueHistogram.hpp>
+
 namespace ColorHarmonization::harmony {
     enum class HarmonyTemplateType {
         i,
@@ -39,5 +41,17 @@ namespace ColorHarmonization::harmony {
 
     [[nodiscard]]
     std::vector<HarmonyTemplate> buildDefaultTemplates();
+
+    [[nodiscard]]
+    float normalizeHue(float angle);
+
+    [[nodiscard]]
+    float circularDistance(float a, float b);
+
+    [[nodiscard]]
+    float distanceToTemplate(float hue, const HarmonyTemplate& harmonyTemplate, float rotationDegrees);
+
+    [[nodiscard]]
+    float templateCost(const HueHistogram& histogram,const HarmonyTemplate& harmonyTemplate, float rotationDegrees);
 
 }   // namespace ColorHarmonization::harmony
