@@ -26,18 +26,18 @@ namespace ColorHarmonization::harmony {
 
     [[nodiscard]]
     HueHistogram HueHistogram::fromImage(const Image<Hsv32f>& image,const HueHistogramOptions& options) {
+
         HueHistogram histogram = HueHistogram(options.binCount);
 
-        for (std::size_t y = 0; y < image.height(); ++y) {
-            for (std::size_t x = 0; x < image.width(); ++x) {
-                const Hsv32f& pixel = image.at(x,y);
-                if (pixel.s < options.saturationThreshold) {
-                    continue;
-                }
-                const std::size_t bin = histogram.binForHue(pixel.h);
-                histogram.addForBin(bin, pixel.s * pixel.v);
-            }
-        }
+        image.forEachPixel([&histogram, &options](
+            std::size_t, std::size_t, const Hsv32f& pixel
+            ) {
+                    if (pixel.s < options.saturationThreshold) {
+                        return;
+                    }
+                    const std::size_t bin = histogram.binForHue(pixel.h);
+                    histogram.addForBin(bin, pixel.s * pixel.v);
+        });
 
         if (options.normalize) {
             histogram.normalize();

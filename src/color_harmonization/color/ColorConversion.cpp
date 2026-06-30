@@ -98,35 +98,19 @@ namespace ColorHarmonization::color {
 
     [[nodiscard]]
     Image<Hsv32f> rgbToHsv(const Image<Rgb8>& imageRgb) {
-        const size_t width = imageRgb.width();
-        const size_t height = imageRgb.height();
-
-        Image<Hsv32f> imageHsv(width, height);
-
-        for (size_t y = 0; y < height; ++y) {
-            for (size_t x = 0; x < width; ++x) {
-                const Rgb8& pixelRgb = imageRgb.at(x, y);
-                imageHsv.at(x,y) = rgbToHsv(pixelRgb);
+        return imageRgb.mapPixels<Hsv32f>(
+            [](const Rgb8& pixel) {
+                return rgbToHsv(pixel);
             }
-        }
-
-        return imageHsv;
+        );
     }
 
     [[nodiscard]]
     Image<Rgb8> hsvToRgb(const Image<Hsv32f>& imageHsv) {
-        const size_t width = imageHsv.width();
-        const size_t height = imageHsv.height();
-
-        Image<Rgb8> imageRgb(width, height);
-
-        for (size_t y = 0; y < height; ++y) {
-            for (size_t x = 0; x < width; ++x) {
-                const Hsv32f& pixelHsv = imageHsv.at(x, y);
-                imageRgb.at(x,y) = hsvToRgb(pixelHsv);
+        return imageHsv.mapPixels<Rgb8>(
+            [](const Hsv32f& pixel) {
+                return hsvToRgb(pixel);
             }
-        }
-
-        return imageRgb;
+        );
     }
 }
