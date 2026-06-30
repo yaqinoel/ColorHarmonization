@@ -1,6 +1,7 @@
 #include <stdexcept>
 #include <string>
 #include <cstdint>
+#include <iostream>
 #include <vector>
 
 #include <stb_image.h>
@@ -70,6 +71,8 @@ namespace ColorHarmonization::ImageIO {
         if (success == 0) {
             throw std::runtime_error("Failed to save image at : " + path.string());
         }
+
+        std::cout<< "Saved image at :" << path.string() << std::endl;
     }
 
 } // namespace Colorharmonization::ImageIO
