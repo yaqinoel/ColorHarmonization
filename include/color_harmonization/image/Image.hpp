@@ -40,6 +40,36 @@ namespace ColorHarmonization {
                 return pixels_[index(x, y)];
             }
 
+            template <typename Func>
+            void forEachPixel(Func func) {
+                for (std::size_t y = 0; y < height_; ++y) {
+                    for (std::size_t x = 0; x < width_; ++x) {
+                        func(x, y, at(x, y));
+                    }
+                }
+            }
+
+            template <typename Func>
+            void forEachPixel(Func func) const{
+                for (std::size_t y = 0; y < height_; ++y) {
+                    for (std::size_t x = 0; x < width_; ++x) {
+                        func(x, y, at(x, y));
+                    }
+                }
+            }
+
+            template <typename OutputPixel, typename Func>
+            [[nodiscard]]
+            Image<OutputPixel> mapPixels(Func func) const {
+                Image<OutputPixel> result(width_, height_);
+                for (std::size_t y = 0; y < height_; ++y) {
+                    for (std::size_t x = 0; x < width_; ++x) {
+                        result.at(x,y) = func(at(x,y));
+                    }
+                }
+                return result;
+            }
+
         private: 
             [[nodiscard]]
             std::size_t index(std::size_t x, std::size_t y) const noexcept{
