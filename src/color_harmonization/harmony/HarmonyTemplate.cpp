@@ -115,6 +115,22 @@ namespace ColorHarmonization::harmony {
         return std::min(difference, 360.0f - difference);
     }
 
+    float signedCircularDistance(float from, float to) {
+        const float normalizedFrom = normalizeHue(from);
+        const float normalizedTo = normalizeHue(to);
+        float diff =  normalizedTo - normalizedFrom;
+
+        if (diff > 180.f) {
+            diff -= 360.f;
+        }
+
+        if (diff < -180.f) {
+            diff += 360.f;
+        }
+
+        return diff;
+    }
+
     float distanceToTemplate(float hue, const HarmonyTemplate& harmonyTemplate, float rotationDegrees) {
         if (harmonyTemplate.sectors().empty()) {
             throw std::invalid_argument("Harmony template must contain sectors");

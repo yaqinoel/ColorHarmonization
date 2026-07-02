@@ -49,7 +49,10 @@ namespace ColorHarmonization::harmony {
     float circularDistance(float a, float b);
 
     [[nodiscard]]
-    float distanceToTemplate(float hue, const HarmonyTemplate& harmonyTemplate, float rotationDegrees);
+    float signedCircularDistance(float from, float to);
+
+    [[nodiscard]]
+    float signedDistanceToTemplate(float hue, const HarmonyTemplate& harmonyTemplate, float rotationDegrees);
 
     [[nodiscard]]
     float templateCost(const HueHistogram& histogram,const HarmonyTemplate& harmonyTemplate, float rotationDegrees);
