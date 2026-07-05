@@ -98,6 +98,73 @@ namespace ColorHarmonization::harmony {
         };
     }   // build default template
 
+    HarmonyTemplate getTemplateByType(HarmonyTemplateType type) {
+        switch (type) {
+            case HarmonyTemplateType::i :
+                return HarmonyTemplate{
+                    HarmonyTemplateType::i,
+                    {
+                        Sector{0.0f, 18.0f}
+                    }
+                };
+            case HarmonyTemplateType::V :
+                return HarmonyTemplate{
+                    HarmonyTemplateType::V,
+                    {
+                        Sector{0.0f, 93.6f}
+                    }
+                };
+            case HarmonyTemplateType::L :
+                return HarmonyTemplate{
+                    HarmonyTemplateType::L,
+                    {
+                        Sector{0.0f, 79.2f},
+                        Sector{90.0f, 18.0f}
+                    }
+                };
+            case HarmonyTemplateType::L_MIRROR :
+                return HarmonyTemplate{
+                    HarmonyTemplateType::L_MIRROR,
+                    {
+                        Sector{0.0f, 79.2f},
+                        Sector{270.0f, 18.0f}
+                    }
+                };
+            case HarmonyTemplateType::I :
+                return HarmonyTemplate{
+                    HarmonyTemplateType::I,
+                    {
+                        Sector{0.0f, 18.0f},
+                        Sector{180.0f, 18.0f}
+                    }
+                };
+            case HarmonyTemplateType::T :
+                return HarmonyTemplate{
+                    HarmonyTemplateType::T,
+                    {
+                        Sector{0.0f, 180.0f}
+                    }
+                };
+            case HarmonyTemplateType::Y :
+                return HarmonyTemplate{
+                    HarmonyTemplateType::Y,
+                    {
+                        Sector{0.0f, 93.6f},
+                        Sector{180.0f, 18.0f}
+                    }
+                };
+            case HarmonyTemplateType::X :
+                return HarmonyTemplate{
+                    HarmonyTemplateType::X,
+                    {
+                        Sector{0.0f, 93.6f},
+                        Sector{180.0f, 93.6f}
+                    }
+                };
+        }
+        throw std::invalid_argument("Unknown HarmonyTemplateType");
+    }   // getTemplateByType
+
     float normalizeHue(float angle) {
         angle = std::fmod(angle, 360.f);
         if (angle < 0) {

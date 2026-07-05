@@ -43,6 +43,9 @@ namespace ColorHarmonization::harmony {
     std::vector<HarmonyTemplate> buildDefaultTemplates();
 
     [[nodiscard]]
+    HarmonyTemplate getTemplateByType(HarmonyTemplateType type);
+
+    [[nodiscard]]
     float normalizeHue(float angle);
 
     [[nodiscard]]
