@@ -13,11 +13,13 @@ add_executable(color_harmonizer
 
         src/color_harmonization/image/StbImplementation.cpp
         src/color_harmonization/image/ImageIO.cpp
+
         src/color_harmonization/color/ColorConversion.cpp
 
         src/color_harmonization/harmony/HueHistogram.cpp
         src/color_harmonization/harmony/HarmonyTemplate.cpp
         src/color_harmonization/harmony/TemplateMatcher.cpp
+        src/color_harmonization/harmony/HueMapper.cpp
 )
 
 target_include_directories(color_harmonizer
