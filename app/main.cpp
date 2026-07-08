@@ -62,7 +62,7 @@ int main() {
         ColorHarmonization::ImageIO::savePng("assets/output/mappedImages/mapped_Linearly.png", ColorHarmonization::color::hsvToRgb(mappedImageLinearly));
 
         std::cout << "harmonize image with template (gaussian)..." << std::endl;
-        Image<Hsv32f> mappedImageWithGaussian = ColorHarmonization::harmony::mapImageHuesWithGaussian(imageHsv, bestTemplate, templateMatchResult.rotationDegrees,30.0F);
+        Image<Hsv32f> mappedImageWithGaussian = ColorHarmonization::harmony::mapImageHuesWithGaussian(imageHsv, bestTemplate, templateMatchResult.rotationDegrees,0.5f);
         ColorHarmonization::ImageIO::savePng("assets/output/mappedImages/mapped_Gaussian.png", ColorHarmonization::color::hsvToRgb(mappedImageWithGaussian));
 
     }catch (const std::exception& e) {

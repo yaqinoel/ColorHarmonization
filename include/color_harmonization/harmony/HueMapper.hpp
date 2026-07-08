@@ -34,7 +34,7 @@ namespace ColorHarmonization::harmony {
         const Image<Hsv32f>& image,
         const HarmonyTemplate& harmonyTemplate,
         float rotationDegrees,
-        float sigma
+        float sigmaScale
     );
 
 }

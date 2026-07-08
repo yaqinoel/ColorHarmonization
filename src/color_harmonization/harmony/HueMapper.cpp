@@ -64,7 +64,7 @@ namespace ColorHarmonization::harmony {
         return normalizeHue(nearestCenter + mappedOffset);
     }
 
-    float mapHueWithGaussian(float hue, const HarmonyTemplate& harmonyTemplate, float rotationDegrees, float sigma) {
+    float mapHueWithGaussian(float hue, const HarmonyTemplate& harmonyTemplate, float rotationDegrees, float sigmaScale) {
         if (harmonyTemplate.sectors().empty()) {
             throw std::invalid_argument("Harmony template must contain sectors");
         }
@@ -88,6 +88,7 @@ namespace ColorHarmonization::harmony {
         }
 
         const float w = nearestSector.width / 2.0f;
+        const float sigma = nearestSector.width * sigmaScale;
         const float offsetFromCenter = signedCircularDistance(nearestCenter, hue);
         const float g = gaussian(std::abs(offsetFromCenter), sigma);
         const float sign = offsetFromCenter > 0.0f ? 1.0f : -1.0f;
@@ -127,15 +128,15 @@ namespace ColorHarmonization::harmony {
         const Image<Hsv32f>& image,
         const HarmonyTemplate& harmonyTemplate,
         float rotationDegrees,
-        float sigma
+        float sigmaScale
     ) {
-        if (sigma <= 0.f) {
+        if (sigmaScale <= 0.f) {
             throw std::invalid_argument("sigma must be positive");
         }
         return image.mapPixels<Hsv32f>(
-            [&harmonyTemplate, rotationDegrees, sigma](const Hsv32f& pixel) {
+            [&harmonyTemplate, rotationDegrees, sigmaScale](const Hsv32f& pixel) {
                 Hsv32f mappedPixel = pixel;;
-                mappedPixel.h = mapHueWithGaussian(pixel.h, harmonyTemplate, rotationDegrees, sigma);
+                mappedPixel.h = mapHueWithGaussian(pixel.h, harmonyTemplate, rotationDegrees, sigmaScale);
                 return mappedPixel;
             }
         );
