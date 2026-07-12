@@ -8,6 +8,13 @@ target_include_directories(stb
         ${PROJECT_SOURCE_DIR}/third_party/stb
 )
 
+add_subdirectory(third_party/maxflow-v3.04)
+
+target_include_directories(maxflow
+    PUBLIC
+        ${PROJECT_SOURCE_DIR}/third_party/maxflow-v3.04
+)
+
 add_executable(color_harmonizer
         app/main.cpp
 
@@ -32,6 +39,7 @@ target_compile_features(color_harmonizer
 )
 
 target_link_libraries(color_harmonizer
-    PRIVATE stb
+    PRIVATE
+        stb
+        maxflow
 )
-
