@@ -16,6 +16,11 @@ namespace ColorHarmonization::harmony {
         X
     };
 
+    enum class MoveDirection {
+        Negative,
+        Positive
+    };
+
     struct Sector {
         float center = 0.0f;    // degrees
         float width = 0.0f;     // degrees
@@ -53,6 +58,9 @@ namespace ColorHarmonization::harmony {
 
     [[nodiscard]]
     float signedCircularDistance(float from, float to);
+
+    [[nodiscard]]
+    float directedCircularDistance(float from, float to, MoveDirection direction);
 
     [[nodiscard]]
     float signedDistanceToTemplate(float hue, const HarmonyTemplate& harmonyTemplate, float rotationDegrees);

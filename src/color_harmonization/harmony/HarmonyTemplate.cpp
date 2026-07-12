@@ -198,6 +198,13 @@ namespace ColorHarmonization::harmony {
         return diff;
     }
 
+    float directedCircularDistance(float from, float to, MoveDirection direction) {
+        if (direction == MoveDirection::Positive) {
+            return normalizeHue(to - from);
+        }
+        return normalizeHue(from - to);
+    }
+
     float distanceToTemplate(float hue, const HarmonyTemplate& harmonyTemplate, float rotationDegrees) {
         if (harmonyTemplate.sectors().empty()) {
             throw std::invalid_argument("Harmony template must contain sectors");

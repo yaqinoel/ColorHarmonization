@@ -7,6 +7,9 @@ namespace ColorHarmonization::harmony {
     float gaussian(float x, float sigma);
 
     [[nodiscard]]
+    Sector findNearestSectorByDirection(float hue, const HarmonyTemplate& harmonyTemplate, float rotationDegrees, MoveDirection direction);
+
+    [[nodiscard]]
     float mapHueToNearestCenter(float hue, const HarmonyTemplate& harmonyTemplate, float rotationDegrees);
 
     [[nodiscard]]
@@ -36,5 +39,7 @@ namespace ColorHarmonization::harmony {
         float rotationDegrees,
         float sigmaScale
     );
+
+
 
 }

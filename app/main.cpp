@@ -32,7 +32,7 @@ int main() {
     matcherOptions.rotationStepDegrees = 1.0f;
 
     try {
-        auto image = ColorHarmonization::ImageIO::loadRgb("assets/input/lily_pad.png");
+        auto image = ColorHarmonization::ImageIO::loadRgb("assets/input/starry_night.jpg");
 
         std::cout << "loaded image..." << std::endl;
 

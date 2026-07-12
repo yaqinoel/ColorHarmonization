@@ -10,6 +10,30 @@ namespace ColorHarmonization::harmony {
         return std::exp(-(x * x) / (2.0f * sigma * sigma));
     }
 
+    Sector findNearestSectorByDirection(float hue, const HarmonyTemplate& harmonyTemplate, float rotationDegrees, MoveDirection direction) {
+        if (harmonyTemplate.sectors().empty()) {
+            throw std::invalid_argument("Harmony template must contain sectors");
+        }
+
+        Sector nearestSector;
+        float minDistanceToSector = std::numeric_limits<float>::max();
+
+        for (const auto& sector : harmonyTemplate.sectors()) {
+            const float shiftedCenter = sector.center + rotationDegrees;
+            const float halfWidth = sector.width / 2.0f;
+
+            float distanceToCenter = directedCircularDistance(hue, shiftedCenter, direction);
+            const float distanceToSector = std::max(0.0f, distanceToCenter - halfWidth);
+
+            if (distanceToSector < minDistanceToSector) {
+                minDistanceToSector = distanceToSector;
+                nearestSector = sector;
+            }
+        }
+
+        return nearestSector;
+    }
+
     float mapHueToNearestCenter(float hue, const HarmonyTemplate& harmonyTemplate, float rotationDegrees) {
         if (harmonyTemplate.sectors().empty()) {
             throw std::invalid_argument("Harmony template must contain sectors");
