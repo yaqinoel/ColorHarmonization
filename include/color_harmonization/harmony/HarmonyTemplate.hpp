@@ -68,4 +68,7 @@ namespace ColorHarmonization::harmony {
     [[nodiscard]]
     float templateCost(const HueHistogram& histogram,const HarmonyTemplate& harmonyTemplate, float rotationDegrees);
 
+    [[nodiscard]]
+    float distanceToSector(const float hue, const Sector sector, float rotationDegrees);
+
 }   // namespace ColorHarmonization::harmony

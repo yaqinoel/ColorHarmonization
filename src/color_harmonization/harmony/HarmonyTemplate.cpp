@@ -248,4 +248,13 @@ namespace ColorHarmonization::harmony {
         return cost;
     }
 
+    float distanceToSector(const float hue, const Sector sector, float rotationDegrees) {
+        const float shiftedCenter = sector.center + rotationDegrees;
+        const float halfWidth = sector.width / 2.0f;
+
+        float distanceToCenter = circularDistance(hue, shiftedCenter);
+
+        return std::max(0.0f, distanceToCenter - halfWidth);
+    }
+
 }

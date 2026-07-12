@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <cmath>
 #include <color_harmonization/harmony/HueMapper.hpp>
+#include "graph.h"
 
 namespace ColorHarmonization::harmony {
 
@@ -164,6 +165,62 @@ namespace ColorHarmonization::harmony {
                 return mappedPixel;
             }
         );
+    }
+
+
+    Image<Hsv32f> mapImageHuesWithGraphCut(
+            const Image<Hsv32f>& image,
+            const HarmonyTemplate& harmonyTemplate,
+            float rotationDegrees,
+            float sigmaScale,
+            float lambda
+    ) {
+
+        typedef Graph<float, float, float> GraphType;
+
+        if (sigmaScale <= 0.f || lambda <= 0.f) {
+            throw std::invalid_argument("sigma or lambda must be positive");
+        }
+
+        // 先进行图割
+        const std::size_t numPixels = image.width() * image.height();
+        std::vector<MoveDirection> label_map(numPixels);
+
+        GraphType *graph = new GraphType(numPixels, numPixels * 2);
+        graph->add_node(numPixels);
+
+        image.forEachPixel([&](
+            std::size_t x, std::size_t y, const Hsv32f& pixel
+            ) {
+                const float normalizedHue = normalizeHue(pixel.h);
+                const Sector leftSector = findNearestSectorByDirection(normalizedHue, harmonyTemplate,rotationDegrees, MoveDirection::Negative);
+                const Sector rightSector = findNearestSectorByDirection(normalizedHue, harmonyTemplate,rotationDegrees, MoveDirection::Negative);
+
+                const float costToLeftSector = distanceToSector(normalizedHue, leftSector, rotationDegrees) * pixel.s * pixel.v;
+                const float costToRightSector = distanceToSector(normalizedHue, rightSector, rotationDegrees) * pixel.s * pixel.v;
+
+                std::size_t node = y * image.width() + x;
+
+                graph->add_tweights(node, costToLeftSector, costToRightSector);
+
+                // N-links E2
+                // with right neighbor
+
+                // with left neighbor
+
+        });
+
+
+
+
+
+
+
+
+
+
+        // 后根据标签进行色相偏移
+
     }
 
 }

@@ -40,6 +40,15 @@ namespace ColorHarmonization::harmony {
         float sigmaScale
     );
 
+    [[nodiscard]]
+    Image<Hsv32f> mapImageHuesWithGraphCut(
+        const Image<Hsv32f>& image,
+        const HarmonyTemplate& harmonyTemplate,
+        float rotationDegrees,
+        float sigmaScale,
+        float lambda
+    );
+
 
 
 }
