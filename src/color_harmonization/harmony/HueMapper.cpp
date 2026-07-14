@@ -121,6 +121,25 @@ namespace ColorHarmonization::harmony {
         return normalizeHue(nearestCenter + sign * w * ( 1 - g ));
     }
 
+    float mapHueWithGaussianByLabelMap(float hue, const HarmonyTemplate& harmonyTemplate, float rotationDegrees, float sigmaScale, MoveDirection direction) {
+        if (harmonyTemplate.sectors().empty()) {
+            throw std::invalid_argument("Harmony template must contain sectors");
+        }
+
+        Sector nearestSector = findNearestSectorByDirection(hue, harmonyTemplate, rotationDegrees, direction);
+
+        const float nearestCenter = normalizeHue(nearestSector.center + rotationDegrees);
+
+        const float w = nearestSector.width / 2.0f;
+        const float sigma = nearestSector.width * sigmaScale;
+        const float offsetFromCenter = signedCircularDistance(nearestCenter, hue);
+        const float g = gaussian(std::abs(offsetFromCenter), sigma);
+        const float sign = offsetFromCenter > 0.0f ? 1.0f : -1.0f;
+
+        return normalizeHue(nearestCenter + sign * w * ( 1 - g ));
+    }
+
+
     Image<Hsv32f> mapImageHuesToNearestCenter(
         const Image<Hsv32f>& image,
         const HarmonyTemplate& harmonyTemplate,
@@ -194,33 +213,62 @@ namespace ColorHarmonization::harmony {
             ) {
                 const float normalizedHue = normalizeHue(pixel.h);
                 const Sector leftSector = findNearestSectorByDirection(normalizedHue, harmonyTemplate,rotationDegrees, MoveDirection::Negative);
-                const Sector rightSector = findNearestSectorByDirection(normalizedHue, harmonyTemplate,rotationDegrees, MoveDirection::Negative);
+                const Sector rightSector = findNearestSectorByDirection(normalizedHue, harmonyTemplate,rotationDegrees, MoveDirection::Positive);
 
                 const float costToLeftSector = distanceToSector(normalizedHue, leftSector, rotationDegrees) * pixel.s * pixel.v;
                 const float costToRightSector = distanceToSector(normalizedHue, rightSector, rotationDegrees) * pixel.s * pixel.v;
 
                 std::size_t node = y * image.width() + x;
 
-                graph->add_tweights(node, costToLeftSector, costToRightSector);
+                graph->add_tweights(node, costToRightSector, costToLeftSector);
 
                 // N-links E2
                 // with right neighbor
+                if (x + 1 < image.width()) {
+                    std::size_t node_right = y * image.width() + x + 1;
+                    Hsv32f pixelRight = image.at(x+1, y);
 
-                // with left neighbor
+                    const float hueDiff = circularDistance(pixel.h, pixelRight.h);
+                    const float saturationWeight = pixel.s * pixelRight.s;
 
+                    const float penalty = lambda * saturationWeight * std::exp(-(hueDiff * hueDiff) / (2.0f * 30.0f * 30.0f));
+                    graph->add_edge(node, node_right, penalty, penalty);
+                }
+
+                // with down neighbor
+                if (y + 1 < image.height()) {
+                    std::size_t node_down = (y + 1) * image.width() + x;
+                    Hsv32f pixelDown = image.at(x, y+1);
+
+                    const float hueDiff = circularDistance(pixel.h, pixelDown.h);
+                    const float saturationWeight = pixel.s * pixelDown.s;
+
+                    const float penalty = lambda * saturationWeight * std::exp(-(hueDiff * hueDiff) / (2.0f * 30.0f * 30.0f));
+                    graph->add_edge(node, node_down, penalty, penalty);
+                }
         });
 
+        // run graph cut
+        graph->maxflow();
 
-
-
-
-
-
-
-
+        // get result of graph cut
+        for (int i = 0; i < numPixels; ++i) {
+            label_map[i] = (graph->what_segment(i) == GraphType::SOURCE) ? MoveDirection::Negative : MoveDirection::Positive;
+        }
+        delete graph;
 
         // 后根据标签进行色相偏移
-
+        return image.mapPixelsWithCoords<Hsv32f>(
+            [&](std::size_t x, std::size_t y, const Hsv32f& pixel) {
+                Hsv32f mappedPixel = pixel;
+                std::size_t index = y * image.width() + x;
+                mappedPixel.h = mapHueWithGaussianByLabelMap(pixel.h, harmonyTemplate, rotationDegrees, sigmaScale, label_map[index]);
+                // mappedPixel.h = label_map[index] == MoveDirection::Negative ? 0.0f : 180.0f;
+                // mappedPixel.s = 1.0f;
+                // mappedPixel.v = 1.0f;
+                return mappedPixel;
+            }
+        );
     }
 
 }

@@ -19,6 +19,9 @@ namespace ColorHarmonization::harmony {
     float mapHueWithGaussian(float hue, const HarmonyTemplate& harmonyTemplate, float rotationDegrees, float sigma);
 
     [[nodiscard]]
+    float mapHueWithGaussianByLabelMap(float hue, const HarmonyTemplate& harmonyTemplate, float rotationDegrees, float sigma, MoveDirection direction);
+
+    [[nodiscard]]
     Image<Hsv32f> mapImageHuesToNearestCenter(
         const Image<Hsv32f>& image,
         const HarmonyTemplate& harmonyTemplate,

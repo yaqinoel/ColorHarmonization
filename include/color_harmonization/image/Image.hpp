@@ -70,6 +70,18 @@ namespace ColorHarmonization {
                 return result;
             }
 
+            template <typename OutputPixel, typename Func>
+            [[nodiscard]]
+            Image<OutputPixel> mapPixelsWithCoords(Func func) const {
+                Image<OutputPixel> result(width_, height_);
+                for (std::size_t y = 0; y < height_; ++y) {
+                    for (std::size_t x = 0; x < width_; ++x) {
+                        result.at(x,y) = func(x, y, at(x,y));
+                    }
+                }
+                return result;
+            }
+
         private: 
             [[nodiscard]]
             std::size_t index(std::size_t x, std::size_t y) const noexcept{

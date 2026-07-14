@@ -51,6 +51,9 @@ int main() {
                  << "\ncost" << templateMatchResult.cost
                  << std::endl;
 
+        // templateMatchResult.templateType = ColorHarmonization::harmony::HarmonyTemplateType::I;
+        // templateMatchResult.rotationDegrees = -50.0f;
+
         HarmonyTemplate bestTemplate = ColorHarmonization::harmony::getTemplateByType(templateMatchResult.templateType);
 
         std::cout << "harmonize image with template (center)..." << std::endl;
@@ -65,14 +68,14 @@ int main() {
         Image<Hsv32f> mappedImageWithGaussian = ColorHarmonization::harmony::mapImageHuesWithGaussian(imageHsv, bestTemplate, templateMatchResult.rotationDegrees,0.5f);
         ColorHarmonization::ImageIO::savePng("assets/output/mappedImages/mapped_Gaussian.png", ColorHarmonization::color::hsvToRgb(mappedImageWithGaussian));
 
+        std::cout << "harmonize image with template (gaussian and graph-cut)..." << std::endl;
+        Image<Hsv32f> mappedImageWithGraphCut = ColorHarmonization::harmony::mapImageHuesWithGraphCut(imageHsv, bestTemplate, templateMatchResult.rotationDegrees,0.5f, 30.0f);
+        ColorHarmonization::ImageIO::savePng("assets/output/mappedImages/mapped_GraphCut.png", ColorHarmonization::color::hsvToRgb(mappedImageWithGraphCut));
+
     }catch (const std::exception& e) {
         std::cerr << e.what() << std::endl;
         return 1;
     }
-
-
-
-
 
     return 0;
 }
