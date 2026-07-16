@@ -27,6 +27,8 @@ add_executable(color_harmonizer
         src/color_harmonization/harmony/HarmonyTemplate.cpp
         src/color_harmonization/harmony/TemplateMatcher.cpp
         src/color_harmonization/harmony/HueMapper.cpp
+
+        src/color_harmonization/visualisation/HueHistogramRender.cpp
 )
 
 target_include_directories(color_harmonizer
