@@ -29,6 +29,9 @@ namespace ColorHarmonization::harmony {
         float valueAt(std::size_t bin) const;
 
         [[nodiscard]]
+        std::size_t binForHue(float hue) const;
+
+        [[nodiscard]]
         float angleAt(std::size_t bin) const;
 
         void addForBin(std::size_t bin, float weight);
@@ -40,8 +43,6 @@ namespace ColorHarmonization::harmony {
         void saveData(const std::filesystem::path& path) const;
 
     private:
-        [[nodiscard]]
-        std::size_t binForHue(float hue) const;
         std::vector<float> bins_;
     };
 

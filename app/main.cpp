@@ -34,17 +34,19 @@ int main() {
     matcherOptions.rotationStepDegrees = 1.0f;
 
     try {
-        auto image = ColorHarmonization::ImageIO::loadRgb("assets/input/starry_night.jpg");
+        auto image = ColorHarmonization::ImageIO::loadRgb("assets/input/lily_pad.png");
 
         std::cout << "loaded image..." << std::endl;
 
         auto imageHsv = ColorHarmonization::color::rgbToHsv(image);
         std::cout << "convert rgb image to hsv..." << std::endl;
 
-        const auto histogram = HueHistogram::fromImage(imageHsv, options);
+        auto histogram = HueHistogram::fromImage(imageHsv, options);
         std::cout << "calculate hue histogram..." << std::endl;
 
-        Image<Rgb8> imageHueHistogram = ColorHarmonization::visualisation::renderHueHistogramWheel(histogram, 1024);
+        histogram.outputData(std::cout);
+
+        Image<Rgb8> imageHueHistogram = ColorHarmonization::visualisation::renderHueHistogramWheel(histogram, 2048);
         ColorHarmonization::ImageIO::savePng("assets/output/histogram/outputHistogram.png",imageHueHistogram);
         std::cout << "saved hue histogram..." << std::endl;
 

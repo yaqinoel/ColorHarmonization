@@ -86,18 +86,20 @@ namespace ColorHarmonization::harmony {
     }
 
     void HueHistogram::normalize() {
-        float sum = 0.0f;
+        float max = std::numeric_limits<float>::min();
 
-        for (const float value : bins_) {
-            sum += value;
+        for (float& value : bins_) {
+            if (value > max) {
+                max = value;
+            }
         }
 
-        if (sum == 0.0f) {
+        if (max == 0.0f) {
             return;
         }
 
         for (float& value : bins_) {
-            value /= sum;
+            value /= max;
         }
     }
 
