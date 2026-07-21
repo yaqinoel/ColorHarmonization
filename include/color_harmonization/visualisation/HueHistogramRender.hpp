@@ -8,6 +8,6 @@
 namespace ColorHarmonization::visualisation {
 
     [[nodiscard]]
-    Image<Rgb8> renderHueHistogramWheel(harmony::HueHistogram& histogram,std::size_t width = 512);
+    Image<Rgb8> renderHueHistogramWheel(const harmony::HueHistogram& histogram,std::size_t width = 512);
 
 }

@@ -41,7 +41,7 @@ int main() {
         auto imageHsv = ColorHarmonization::color::rgbToHsv(image);
         std::cout << "convert rgb image to hsv..." << std::endl;
 
-        auto histogram = HueHistogram::fromImage(imageHsv, options);
+        const auto histogram = HueHistogram::fromImage(imageHsv, options);
         std::cout << "calculate hue histogram..." << std::endl;
 
         histogram.outputData(std::cout);

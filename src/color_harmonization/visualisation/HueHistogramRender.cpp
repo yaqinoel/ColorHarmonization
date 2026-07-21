@@ -5,7 +5,7 @@
 
 namespace ColorHarmonization::visualisation {
 
-    Image<Rgb8> renderHueHistogramWheel(harmony::HueHistogram& histogram,std::size_t width) {
+    Image<Rgb8> renderHueHistogramWheel(const harmony::HueHistogram& histogram,std::size_t width) {
         Image<Hsv32f> resultHsv(width, width);
         if (histogram.binCount() <= 0) {
             return color::hsvToRgb(resultHsv);
@@ -18,10 +18,6 @@ namespace ColorHarmonization::visualisation {
         const std::size_t borderWidth = 6;
         const std::size_t centerPointRadius = 20;
         const std::size_t binCount = histogram.binCount();
-        const float binWidth = 360.0f / binCount;
-
-        // normalize raw data
-        histogram.normalize();
 
         // draw background
         resultHsv.forEachPixel([](std::size_t, std::size_t, Hsv32f& pixel) {
@@ -36,6 +32,15 @@ namespace ColorHarmonization::visualisation {
 
             float distanceToCenter = std::sqrt(dx * dx + dy * dy);
             float angle = std::atan2(dy, dx) * 180.f / M_PI;
+
+            // draw bars
+            std::size_t bin = histogram.binForHue(angle);
+            const float binHeight = histogram.valueAt(bin);
+            if (distanceToCenter <= (radiusIn - borderWidth) && distanceToCenter >= (radiusIn - radiusIn * binHeight) ) {
+                pixel.h = angle;
+                pixel.s = 0.8f;
+                pixel.v = 1.0f;
+            }
 
             // draw colorWheel
             if (distanceToCenter <= radiusOut && distanceToCenter >= radiusIn) {
@@ -52,22 +57,12 @@ namespace ColorHarmonization::visualisation {
                 pixel.v = 0.5f;
             }
 
-            // draw blak point in the center
+            // draw center point
             if (distanceToCenter <= centerPointRadius) {
                 pixel.h = 0.0f;
                 pixel.s = 0.0f;
                 pixel.v = 0.0f;
             }
-
-            // draw bar
-            std::size_t bin = histogram.binForHue(angle);
-            const float binHeight = histogram.valueAt(bin);
-            if (distanceToCenter <= (radiusIn - borderWidth) && distanceToCenter >= (radiusIn - radiusIn * binHeight) ) {
-                pixel.h = angle;
-                pixel.s = 0.8f;
-                pixel.v = 1.0f;
-            }
-
         });
 
         return color::hsvToRgb(resultHsv);
