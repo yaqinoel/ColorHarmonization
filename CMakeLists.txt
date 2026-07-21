@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 3.22.0)
 project(Color_Harmonization)
 
 add_library(stb INTERFACE)
@@ -16,7 +16,7 @@ target_include_directories(maxflow
 )
 
 add_executable(color_harmonizer
-        app/main.cpp
+        app/cli_main.cpp
 
         src/color_harmonization/image/StbImplementation.cpp
         src/color_harmonization/image/ImageIO.cpp
@@ -44,4 +44,22 @@ target_link_libraries(color_harmonizer
     PRIVATE
         stb
         maxflow
+)
+
+find_package(Qt6 REQUIRED COMPONENTS Widgets)
+qt_standard_project_setup()
+
+qt_add_executable(color_harmonizer_gui
+    app/gui/main.cpp
+    app/gui/MainWindow.cpp
+    app/gui/MainWindow.hpp
+)
+
+target_compile_features(color_harmonizer_gui
+    PRIVATE cxx_std_17
+)
+
+target_link_libraries(color_harmonizer_gui
+    PRIVATE
+        Qt6::Widgets
 )
