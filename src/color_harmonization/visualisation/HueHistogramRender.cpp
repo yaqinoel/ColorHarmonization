@@ -17,7 +17,6 @@ namespace ColorHarmonization::visualisation {
         const std::size_t radiusIn = 4 * width / 12;
         const std::size_t borderWidth = 6;
         const std::size_t centerPointRadius = 20;
-        const std::size_t binCount = histogram.binCount();
 
         // draw background
         resultHsv.forEachPixel([](std::size_t, std::size_t, Hsv32f& pixel) {
