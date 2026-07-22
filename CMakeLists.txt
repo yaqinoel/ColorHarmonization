@@ -3,11 +3,13 @@ project(Color_Harmonization)
 
 add_library(stb INTERFACE)
 
+# stb
 target_include_directories(stb
     INTERFACE
         ${PROJECT_SOURCE_DIR}/third_party/stb
 )
 
+# maxflow
 add_subdirectory(third_party/maxflow-v3.04)
 
 target_include_directories(maxflow
@@ -15,9 +17,8 @@ target_include_directories(maxflow
         ${PROJECT_SOURCE_DIR}/third_party/maxflow-v3.04
 )
 
-add_executable(color_harmonizer
-        app/cli_main.cpp
-
+# static library
+add_library(color_harmonization_core STATIC
         src/color_harmonization/image/StbImplementation.cpp
         src/color_harmonization/image/ImageIO.cpp
 
@@ -31,21 +32,32 @@ add_executable(color_harmonizer
         src/color_harmonization/visualisation/HueHistogramRender.cpp
 )
 
-target_include_directories(color_harmonizer
+target_include_directories(color_harmonization_core
     PRIVATE
         ${PROJECT_SOURCE_DIR}/include
 )
 
-target_compile_features(color_harmonizer
+target_compile_features(color_harmonization_core
     PRIVATE cxx_std_17
 )
 
-target_link_libraries(color_harmonizer
+target_link_libraries(color_harmonization_core
     PRIVATE
         stb
         maxflow
 )
 
+# Cli
+add_executable(color_harmonizer
+    app/cli_main.cpp
+)
+
+target_link_libraries(color_harmonizer
+    PRIVATE
+        color_harmonization_core
+)
+
+# Qt GUI
 find_package(Qt6 REQUIRED COMPONENTS Widgets)
 qt_standard_project_setup()
 
