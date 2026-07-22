@@ -1,20 +1,90 @@
 #include "MainWindow.hpp"
 
+#include <QAction>
+#include <QFrame>
 #include <QLabel>
+#include <QSplitter>
+#include <QStatusBar>
+#include <QToolBar>
 #include <QVBoxLayout>
 #include <QWidget>
+
+namespace {
+    QWidget* createPlaceholderPanel(const QString& title, QWidget* parent) {
+        auto* panel = new QFrame(parent);
+        panel->setFrameShape(QFrame::StyledPanel);
+
+        auto* layout = new QVBoxLayout(panel);
+
+        auto* label = new QLabel(title, panel);
+        label->setAlignment(Qt::AlignCenter);
+
+        layout->addWidget(label);
+
+        return panel;
+    }
+}
 
 MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent) {
     setWindowTitle("Color Harmonization");
     resize(1000, 700);
 
-    auto* centralWidget = new QWidget(this);
-    auto* layout = new QVBoxLayout(centralWidget);
+    createToolBar();
+    createCentralArea();
 
-    auto* titleLabel = new QLabel("Color Harmonization", centralWidget);
-    titleLabel->setAlignment(Qt::AlignCenter);
-    layout->addWidget(titleLabel);
+    statusBar()->showMessage("Ready");
+}
 
-    setCentralWidget(centralWidget);
+void MainWindow::createToolBar() {
+    auto* toolBar = addToolBar("Main toolbar");
+
+    toolBar->setMovable(false);
+
+    openImageAction_ = toolBar->addAction("Open image");
+    saveImageAction_ = toolBar->addAction("Save image");
+    resetAction_ = toolBar->addAction("Reset");
+
+    saveImageAction_->setEnabled(false);
+    resetAction_->setEnabled(false);
+}
+
+void MainWindow::createCentralArea() {
+    mainSplitter_ = new QSplitter(
+        Qt::Horizontal,
+        this
+    );
+
+    originalPanel_ = createPlaceholderPanel(
+        "Original Image",
+        mainSplitter_
+    );
+
+    resultPanel_ = createPlaceholderPanel(
+        "Harmonized Result",
+        mainSplitter_
+    );
+
+    controlPanel_ = createPlaceholderPanel(
+        "Controls",
+        mainSplitter_
+    );
+
+    mainSplitter_->addWidget(originalPanel_);
+    mainSplitter_->addWidget(resultPanel_);
+    mainSplitter_->addWidget(controlPanel_);
+
+    mainSplitter_->setStretchFactor(0, 4);
+    mainSplitter_->setStretchFactor(1, 4);
+    mainSplitter_->setStretchFactor(2, 2);
+
+    mainSplitter_->setChildrenCollapsible(false);
+
+    originalPanel_->setMinimumWidth(300);
+    resultPanel_->setMinimumWidth(300);
+    controlPanel_->setMinimumWidth(260);
+
+    mainSplitter_->setSizes({500, 500, 300});
+
+    setCentralWidget(mainSplitter_);
 }
