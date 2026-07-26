@@ -9,6 +9,8 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
+#include "ImageView.hpp"
+
 namespace {
     QWidget* createPlaceholderPanel(const QString& title, QWidget* parent) {
         auto* panel = new QFrame(parent);
@@ -50,25 +52,13 @@ void MainWindow::createToolBar() {
 }
 
 void MainWindow::createCentralArea() {
-    mainSplitter_ = new QSplitter(
-        Qt::Horizontal,
-        this
-    );
+    mainSplitter_ = new QSplitter(Qt::Horizontal,this);
 
-    originalPanel_ = createPlaceholderPanel(
-        "Original Image",
-        mainSplitter_
-    );
+    originalPanel_ = createPlaceholderPanel("Original Image",mainSplitter_);
 
-    resultPanel_ = createPlaceholderPanel(
-        "Harmonized Result",
-        mainSplitter_
-    );
+    resultPanel_ = createPlaceholderPanel("Harmonized Result",mainSplitter_);
 
-    controlPanel_ = createPlaceholderPanel(
-        "Controls",
-        mainSplitter_
-    );
+    controlPanel_ = createPlaceholderPanel("Controls",mainSplitter_);
 
     mainSplitter_->addWidget(originalPanel_);
     mainSplitter_->addWidget(resultPanel_);
