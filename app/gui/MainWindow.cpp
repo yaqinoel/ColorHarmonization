@@ -59,11 +59,11 @@ void MainWindow::createCentralArea() {
 
     originalPanel_ = new ImagePanel("Original Image",mainSplitter_);
     originalPanel_->setImage(placeHolderImage);
-    originalPanel_->setHistogramImage(placeHolderImage);
+    originalPanel_->setHistogram(placeHolderImage);
 
     resultPanel_ = new ImagePanel("Harmonized Result",mainSplitter_);
     resultPanel_->setImage(placeHolderImage);
-    resultPanel_->setHistogramImage(placeHolderImage);
+    resultPanel_->setHistogram(placeHolderImage);
 
     controlPanel_ = createPlaceholderPanel("Controls",mainSplitter_);
 

@@ -1,5 +1,6 @@
 #include "ImagePanel.hpp"
 #include "ImageView.hpp"
+#include "HistogramView.hpp"
 
 #include <QFrame>
 #include <QImage>
@@ -14,15 +15,11 @@ ImagePanel::ImagePanel(const QString& title, QWidget* parent) : QWidget(parent) 
     titleLabel->setAlignment(Qt::AlignCenter);
 
     imageView = new ImageView(this);
-
-    histogramLabel = new QLabel("Histogram",this);
-    histogramLabel->setAlignment(Qt::AlignCenter);
-    histogramLabel->setFrameStyle(QFrame::StyledPanel);
-    histogramLabel->setMinimumHeight(160);
+    histogramView = new HistogramView(this);
 
     auto* contentSplitter = new QSplitter(Qt::Vertical,this);
     contentSplitter->addWidget(imageView);
-    contentSplitter->addWidget(histogramLabel);
+    contentSplitter->addWidget(histogramView);
 
     contentSplitter->setStretchFactor(0, 3);
     contentSplitter->setStretchFactor(1, 1);
@@ -37,24 +34,11 @@ void ImagePanel::setImage(const QImage& image) {
     imageView->setImage(image);
 }
 
-void ImagePanel::setHistogramImage(const QImage& image) {
-    if (image.isNull()) {
-        histogramLabel->clear();
-        histogramLabel->setText("Histogram");
-        return;
-    }
-
-    const QPixmap pixMap = QPixmap::fromImage(image);
-    histogramLabel->setPixmap(pixMap.scaled(
-        histogramLabel->size(),
-        Qt::KeepAspectRatio,
-        Qt::SmoothTransformation
-        ));
-
+void ImagePanel::setHistogram(const QImage& image) {
+    histogramView->setHistogram(image);
 }
 
 void ImagePanel::clear() {
     imageView->clearImage();
-    histogramLabel->clear();
-    histogramLabel->setText("Histogram");
+    histogramView->clearImage();
 }

@@ -15,9 +15,12 @@ public:
     explicit ImageView(QWidget* parent = nullptr);
     void setImage(const QImage &image);
     void clearImage();
+    void fitImage();
+
+protected:
+    void resizeEvent(QResizeEvent* event) override;
 
 private:
     QGraphicsScene* scene = nullptr;
     QGraphicsPixmapItem* imageItem = nullptr;
-
 };

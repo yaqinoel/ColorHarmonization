@@ -6,6 +6,7 @@
 #include <QPainter>
 #include <QPixmap>
 #include <QRectF>
+#include <QResizeEvent>
 
 ImageView::ImageView(QWidget* parent) : QGraphicsView(parent), scene(new QGraphicsScene(this)){
     setScene(scene);
@@ -32,9 +33,7 @@ void ImageView::setImage(const QImage& image) {
 
     scene->setSceneRect(imageItem->sceneBoundingRect());
 
-    resetTransform();
-
-    fitInView(imageItem, Qt::KeepAspectRatio);
+    fitImage();
 }
 
 void ImageView::clearImage() {
@@ -44,4 +43,15 @@ void ImageView::clearImage() {
     scene->setSceneRect(QRectF{});
 }
 
+void ImageView::fitImage() {
+    if (imageItem == nullptr) {
+        return;
+    }
+    resetTransform();
+    fitInView(imageItem, Qt::KeepAspectRatio);
+}
 
+void ImageView::resizeEvent(QResizeEvent* event) {
+    QGraphicsView::resizeEvent(event);
+    fitImage();
+}
