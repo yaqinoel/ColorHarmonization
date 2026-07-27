@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QMainWindow>
+#include <QImage>
 
 class QAction;
 class QSplitter;
@@ -14,6 +15,7 @@ public:
 private:
     void createToolBar();
     void createCentralArea();
+    void openImage();
 
     QAction* openImageAction_ = nullptr;
     QAction* saveImageAction_ = nullptr;
@@ -24,4 +26,6 @@ private:
     ImagePanel* originalPanel_ = nullptr;
     ImagePanel* resultPanel_ = nullptr;
     QWidget* controlPanel_ = nullptr;
+
+    QImage originalImage;
 };

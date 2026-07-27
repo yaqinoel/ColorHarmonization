@@ -8,6 +8,9 @@
 #include <QToolBar>
 #include <QVBoxLayout>
 #include <QWidget>
+#include <QFileDialog>
+#include <QImage>
+#include <QMessageBox>
 
 #include "ImagePanel.hpp"
 #include "ImageView.hpp"
@@ -50,6 +53,13 @@ void MainWindow::createToolBar() {
 
     saveImageAction_->setEnabled(false);
     resetAction_->setEnabled(false);
+
+    connect(
+        openImageAction_,
+        &QAction::triggered,
+        this,
+        &MainWindow::openImage
+    );
 }
 
 void MainWindow::createCentralArea() {
@@ -84,4 +94,38 @@ void MainWindow::createCentralArea() {
     mainSplitter_->setSizes({500, 500, 300});
 
     setCentralWidget(mainSplitter_);
+}
+
+void MainWindow::openImage() {
+    const QString filePath = QFileDialog::getOpenFileName(
+        this,
+        "Open Image",
+        {},
+        "Images (*.png *.jpg *.jpeg)"
+        );
+
+    if (filePath.isEmpty()) {
+        return;
+    }
+
+    QImage loadedImage(filePath);
+
+    if (loadedImage.isNull()) {
+        QMessageBox::warning(
+            this,
+            "Open Image",
+            "Failed to load the selected image."
+        );
+        return;
+    }
+
+    originalImage = loadedImage;
+    originalPanel_->setImage(originalImage);
+    originalPanel_->setHistogram(originalImage);
+
+    statusBar()->showMessage(
+        QString("Loaded %1 × %2")
+            .arg(originalImage.width())
+            .arg(originalImage.height())
+    );
 }
