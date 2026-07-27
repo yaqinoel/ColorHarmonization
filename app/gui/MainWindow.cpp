@@ -9,6 +9,7 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
+#include "ImagePanel.hpp"
 #include "ImageView.hpp"
 
 namespace {
@@ -54,9 +55,15 @@ void MainWindow::createToolBar() {
 void MainWindow::createCentralArea() {
     mainSplitter_ = new QSplitter(Qt::Horizontal,this);
 
-    originalPanel_ = createPlaceholderPanel("Original Image",mainSplitter_);
+    QImage placeHolderImage ("assets/input/starry_night.jpg");
 
-    resultPanel_ = createPlaceholderPanel("Harmonized Result",mainSplitter_);
+    originalPanel_ = new ImagePanel("Original Image",mainSplitter_);
+    originalPanel_->setImage(placeHolderImage);
+    originalPanel_->setHistogramImage(placeHolderImage);
+
+    resultPanel_ = new ImagePanel("Harmonized Result",mainSplitter_);
+    resultPanel_->setImage(placeHolderImage);
+    resultPanel_->setHistogramImage(placeHolderImage);
 
     controlPanel_ = createPlaceholderPanel("Controls",mainSplitter_);
 
@@ -70,9 +77,9 @@ void MainWindow::createCentralArea() {
 
     mainSplitter_->setChildrenCollapsible(false);
 
-    originalPanel_->setMinimumWidth(300);
-    resultPanel_->setMinimumWidth(300);
-    controlPanel_->setMinimumWidth(260);
+    originalPanel_->setMinimumWidth(200);
+    resultPanel_->setMinimumWidth(200);
+    controlPanel_->setMinimumWidth(200);
 
     mainSplitter_->setSizes({500, 500, 300});
 

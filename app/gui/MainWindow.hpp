@@ -5,6 +5,7 @@
 class QAction;
 class QSplitter;
 class QWidget;
+class ImagePanel;
 
 class MainWindow final : public QMainWindow {
 public:
@@ -20,7 +21,7 @@ private:
 
     QSplitter* mainSplitter_ = nullptr;
 
-    QWidget* originalPanel_ = nullptr;
-    QWidget* resultPanel_ = nullptr;
+    ImagePanel* originalPanel_ = nullptr;
+    ImagePanel* resultPanel_ = nullptr;
     QWidget* controlPanel_ = nullptr;
 };

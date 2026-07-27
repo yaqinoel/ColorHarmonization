@@ -6,14 +6,14 @@ class ImageView;
 
 class ImagePanel final : public QWidget {
 public:
-    explicit ImagePanel(QString& title, QWidget* parent = nullptr);
+    explicit ImagePanel(const QString& title, QWidget* parent = nullptr);
 
     void setImage(const QImage& image);
     void setHistogramImage(const QImage& image);
     void clear();
 
 private:
-    QLabel* title = nullptr;
+    QLabel* titleLabel = nullptr;
     ImageView* imageView = nullptr;
     QLabel* histogramLabel= nullptr;
 };
