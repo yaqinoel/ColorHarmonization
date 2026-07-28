@@ -2,15 +2,15 @@
 
 #include <QVBoxLayout>
 #include <QLabel>
-#include <qscrollarea.h>
+#include <QScrollArea>
 #include <QPushButton>
-
+#include <QFrame>
 
 ControlPanel::ControlPanel(QWidget *parent) : QWidget(parent) {
     auto* titleLabel = new QLabel("Algorithm Settings", this);
     titleLabel->setAlignment(Qt::AlignCenter);
 
-    auto* settingsWidget = new QWidget(this);
+    auto* settingsWidget = new QWidget();
 
     auto* settingsLayout = new QVBoxLayout(settingsWidget);
     auto* placeHolderLabel = new QLabel("settings",settingsWidget);

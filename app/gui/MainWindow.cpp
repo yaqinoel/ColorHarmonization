@@ -109,6 +109,13 @@ void MainWindow::createCentralArea() {
     mainSplitter_->setSizes({500, 500, 300});
 
     setCentralWidget(mainSplitter_);
+
+    connect(
+        controlPanel,
+        &ControlPanel::startRequested,
+        this,
+        &MainWindow::startHarmonization
+    );
 }
 
 void MainWindow::openImage() {
@@ -151,4 +158,8 @@ void MainWindow::saveResult() {
 
 void MainWindow::resetResult() {
     statusBar()->showMessage(QString("Reseted result"));
+}
+
+void MainWindow::startHarmonization() {
+    statusBar()->showMessage(QString("Starting Harmonization"));
 }

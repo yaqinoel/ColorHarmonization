@@ -15,6 +15,5 @@ signals:
     void startRequested();
 
 private:
-    QAction* startHarmonizeAction;
-    QPushButton* startButton;
+    QPushButton* startButton = nullptr;
 };

@@ -12,6 +12,7 @@ class ImagePanel;
 class MainWindow final : public QMainWindow {
 public:
     explicit MainWindow(QWidget* parent = nullptr);
+    void startHarmonization();
 
 private:
     void createToolBar();
