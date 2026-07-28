@@ -12,6 +12,7 @@
 #include <QImage>
 #include <QMessageBox>
 
+#include "ControlPanel.hpp"
 #include "ImagePanel.hpp"
 #include "ImageView.hpp"
 
@@ -60,6 +61,20 @@ void MainWindow::createToolBar() {
         this,
         &MainWindow::openImage
     );
+
+    connect(
+        saveImageAction_,
+        &QAction::triggered,
+        this,
+        &MainWindow::saveResult
+    );
+
+    connect(
+        resetAction_,
+        &QAction::triggered,
+        this,
+        &MainWindow::resetResult
+    );
 }
 
 void MainWindow::createCentralArea() {
@@ -75,11 +90,11 @@ void MainWindow::createCentralArea() {
     resultPanel_->setImage(placeHolderImage);
     resultPanel_->setHistogram(placeHolderImage);
 
-    controlPanel_ = createPlaceholderPanel("Controls",mainSplitter_);
+    controlPanel = new ControlPanel(mainSplitter_);
 
     mainSplitter_->addWidget(originalPanel_);
     mainSplitter_->addWidget(resultPanel_);
-    mainSplitter_->addWidget(controlPanel_);
+    mainSplitter_->addWidget(controlPanel);
 
     mainSplitter_->setStretchFactor(0, 4);
     mainSplitter_->setStretchFactor(1, 4);
@@ -89,7 +104,7 @@ void MainWindow::createCentralArea() {
 
     originalPanel_->setMinimumWidth(200);
     resultPanel_->setMinimumWidth(200);
-    controlPanel_->setMinimumWidth(200);
+    controlPanel->setMinimumWidth(200);
 
     mainSplitter_->setSizes({500, 500, 300});
 
@@ -124,8 +139,16 @@ void MainWindow::openImage() {
     originalPanel_->setHistogram(originalImage);
 
     statusBar()->showMessage(
-        QString("Loaded %1 × %2")
+        QString("Loaded image %1 × %2")
             .arg(originalImage.width())
             .arg(originalImage.height())
     );
+}
+
+void MainWindow::saveResult() {
+    statusBar()->showMessage(QString("Saved result"));
+}
+
+void MainWindow::resetResult() {
+    statusBar()->showMessage(QString("Reseted result"));
 }

@@ -70,6 +70,9 @@ qt_add_executable(color_harmonizer_gui
     app/gui/ImagePanel.hpp
     app/gui/ImagePanel.cpp
 
+    app/gui/ControlPanel.hpp
+    app/gui/ControlPanel.cpp
+
     app/gui/ImageView.hpp
     app/gui/ImageView.cpp
 

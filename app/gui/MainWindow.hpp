@@ -3,6 +3,7 @@
 #include <QMainWindow>
 #include <QImage>
 
+class ControlPanel;
 class QAction;
 class QSplitter;
 class QWidget;
@@ -16,6 +17,8 @@ private:
     void createToolBar();
     void createCentralArea();
     void openImage();
+    void saveResult();
+    void resetResult();
 
     QAction* openImageAction_ = nullptr;
     QAction* saveImageAction_ = nullptr;
@@ -25,7 +28,7 @@ private:
 
     ImagePanel* originalPanel_ = nullptr;
     ImagePanel* resultPanel_ = nullptr;
-    QWidget* controlPanel_ = nullptr;
+    ControlPanel* controlPanel = nullptr;
 
     QImage originalImage;
 };

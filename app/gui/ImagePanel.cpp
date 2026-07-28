@@ -21,7 +21,7 @@ ImagePanel::ImagePanel(const QString& title, QWidget* parent) : QWidget(parent) 
     contentSplitter->addWidget(imageView);
     contentSplitter->addWidget(histogramView);
 
-    contentSplitter->setStretchFactor(0, 3);
+    contentSplitter->setStretchFactor(0, 1);
     contentSplitter->setStretchFactor(1, 1);
     contentSplitter->setChildrenCollapsible(false);
 
