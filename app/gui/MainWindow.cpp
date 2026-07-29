@@ -16,6 +16,12 @@
 #include "ImagePanel.hpp"
 #include "ImageView.hpp"
 
+#include <color_harmonization/image/ImageIO.hpp>
+#include <color_harmonization/image/Image.hpp>
+#include <color_harmonization/image/Pixel.hpp>
+
+#include "QtImageConverter.hpp"
+
 namespace {
     QWidget* createPlaceholderPanel(const QString& title, QWidget* parent) {
         auto* panel = new QFrame(parent);
@@ -78,9 +84,13 @@ void MainWindow::createToolBar() {
 }
 
 void MainWindow::createCentralArea() {
+    using namespace ColorHarmonization;
     mainSplitter_ = new QSplitter(Qt::Horizontal,this);
 
-    QImage placeHolderImage ("assets/input/starry_night.jpg");
+    const Image<Rgb8> testImage = ImageIO::loadRgb("assets/input/lena.png");
+    QImage placeHolderImage = gui::toQtImage(testImage);
+
+    // QImage placeHolderImage ("assets/input/starry_night.jpg");
 
     originalPanel_ = new ImagePanel("Original Image",mainSplitter_);
     originalPanel_->setImage(placeHolderImage);

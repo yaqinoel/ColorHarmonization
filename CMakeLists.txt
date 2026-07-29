@@ -79,6 +79,9 @@ qt_add_executable(color_harmonizer_gui
 
     app/gui/HistogramView.hpp
     app/gui/HistogramView.cpp
+
+    app/gui/QtImageConverter.hpp
+    app/gui/QtImageConverter.cpp
 )
 
 target_compile_features(color_harmonizer_gui
