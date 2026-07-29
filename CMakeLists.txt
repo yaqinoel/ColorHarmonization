@@ -33,12 +33,13 @@ add_library(color_harmonization_core STATIC
 )
 
 target_include_directories(color_harmonization_core
-    PRIVATE
+    PUBLIC
         ${PROJECT_SOURCE_DIR}/include
 )
 
 target_compile_features(color_harmonization_core
-    PRIVATE cxx_std_17
+    PUBLIC
+        cxx_std_17
 )
 
 target_link_libraries(color_harmonization_core
@@ -87,4 +88,5 @@ target_compile_features(color_harmonizer_gui
 target_link_libraries(color_harmonizer_gui
     PRIVATE
         Qt6::Widgets
+        color_harmonization_core
 )
