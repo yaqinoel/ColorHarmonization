@@ -3,6 +3,8 @@
 #include <QMainWindow>
 #include <QImage>
 
+#include "color_harmonization/harmony/HueHistogram.hpp"
+
 class ControlPanel;
 class QAction;
 class QSplitter;
@@ -21,6 +23,9 @@ private:
     void saveResult();
     void resetResult();
 
+    [[nodiscard]]
+    QImage calculateHistogramImage(const QImage& image) const;
+
     QAction* openImageAction_ = nullptr;
     QAction* saveImageAction_ = nullptr;
     QAction* resetAction_ = nullptr;
@@ -32,4 +37,7 @@ private:
     ControlPanel* controlPanel = nullptr;
 
     QImage originalImage;
+    QImage origianlHueHistogramImage;
+    QImage resultImage;
+    QImage resultHueHistogramImage;
 };

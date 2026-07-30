@@ -21,6 +21,8 @@
 #include <color_harmonization/image/Pixel.hpp>
 
 #include "QtImageConverter.hpp"
+#include "color_harmonization/color/ColorConversion.hpp"
+#include "color_harmonization/visualisation/HueHistogramRender.hpp"
 
 namespace {
     QWidget* createPlaceholderPanel(const QString& title, QWidget* parent) {
@@ -87,19 +89,8 @@ void MainWindow::createCentralArea() {
     using namespace ColorHarmonization;
     mainSplitter_ = new QSplitter(Qt::Horizontal,this);
 
-    const Image<Rgb8> testImage = ImageIO::loadRgb("assets/input/lena.png");
-    QImage placeHolderImage = gui::toQtImage(testImage);
-
-    // QImage placeHolderImage ("assets/input/starry_night.jpg");
-
     originalPanel_ = new ImagePanel("Original Image",mainSplitter_);
-    originalPanel_->setImage(placeHolderImage);
-    originalPanel_->setHistogram(placeHolderImage);
-
     resultPanel_ = new ImagePanel("Harmonized Result",mainSplitter_);
-    resultPanel_->setImage(placeHolderImage);
-    resultPanel_->setHistogram(placeHolderImage);
-
     controlPanel = new ControlPanel(mainSplitter_);
 
     mainSplitter_->addWidget(originalPanel_);
@@ -153,7 +144,9 @@ void MainWindow::openImage() {
 
     originalImage = loadedImage;
     originalPanel_->setImage(originalImage);
-    originalPanel_->setHistogram(originalImage);
+
+    origianlHueHistogramImage = calculateHistogramImage(originalImage);
+    originalPanel_->setHistogram(origianlHueHistogramImage);
 
     statusBar()->showMessage(
         QString("Loaded image %1 × %2")
@@ -172,4 +165,19 @@ void MainWindow::resetResult() {
 
 void MainWindow::startHarmonization() {
     statusBar()->showMessage(QString("Starting Harmonization"));
+}
+
+QImage MainWindow::calculateHistogramImage(const QImage& image) const{
+    ColorHarmonization::harmony::HueHistogramOptions options;
+    options.binCount = 360;
+    options.normalize = true;
+    options.saturationThreshold = 0.01f;
+
+    ColorHarmonization::Image<ColorHarmonization::Rgb8> rgbImage = ColorHarmonization::gui::fromQtImage(image);
+
+    auto imageHsv = ColorHarmonization::color::rgbToHsv(rgbImage);
+    const auto histogram = ColorHarmonization::harmony::HueHistogram::fromImage(imageHsv, options);
+    ColorHarmonization::Image<ColorHarmonization::Rgb8> imageHueHistogram = ColorHarmonization::visualisation::renderHueHistogramWheel(histogram, 2048);
+
+    return ColorHarmonization::gui::toQtImage(imageHueHistogram);
 }
