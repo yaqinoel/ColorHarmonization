@@ -3,8 +3,6 @@
 #include <QMainWindow>
 #include <QImage>
 
-#include "color_harmonization/harmony/HueHistogram.hpp"
-
 class ControlPanel;
 class QAction;
 class QSplitter;
@@ -37,7 +35,7 @@ private:
     ControlPanel* controlPanel = nullptr;
 
     QImage originalImage;
-    QImage origianlHueHistogramImage;
+    QImage originalHueHistogramImage;
     QImage resultImage;
     QImage resultHueHistogramImage;
 };

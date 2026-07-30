@@ -1,8 +1,6 @@
 #include "MainWindow.hpp"
 
 #include <QAction>
-#include <QFrame>
-#include <QLabel>
 #include <QSplitter>
 #include <QStatusBar>
 #include <QToolBar>
@@ -86,7 +84,6 @@ void MainWindow::createToolBar() {
 }
 
 void MainWindow::createCentralArea() {
-    using namespace ColorHarmonization;
     mainSplitter_ = new QSplitter(Qt::Horizontal,this);
 
     originalPanel_ = new ImagePanel("Original Image",mainSplitter_);
@@ -142,17 +139,27 @@ void MainWindow::openImage() {
         return;
     }
 
-    originalImage = loadedImage;
-    originalPanel_->setImage(originalImage);
+    try {
+        QImage histogramImage = calculateHistogramImage(loadedImage);
+        originalHueHistogramImage = histogramImage;
+        originalImage = loadedImage;
 
-    origianlHueHistogramImage = calculateHistogramImage(originalImage);
-    originalPanel_->setHistogram(origianlHueHistogramImage);
+        originalPanel_->setImage(originalImage);
+        originalPanel_->setHistogram(originalHueHistogramImage);
+    }catch (const std::exception& exception) {
+        QMessageBox::critical(this, "Processing failed", exception.what());
+    }
 
     statusBar()->showMessage(
         QString("Loaded image %1 × %2")
             .arg(originalImage.width())
             .arg(originalImage.height())
     );
+
+    // clean old result
+    resultImage = {};
+    resultHueHistogramImage = {};
+    resultPanel_->clear();
 }
 
 void MainWindow::saveResult() {
@@ -177,7 +184,7 @@ QImage MainWindow::calculateHistogramImage(const QImage& image) const{
 
     auto imageHsv = ColorHarmonization::color::rgbToHsv(rgbImage);
     const auto histogram = ColorHarmonization::harmony::HueHistogram::fromImage(imageHsv, options);
-    ColorHarmonization::Image<ColorHarmonization::Rgb8> imageHueHistogram = ColorHarmonization::visualisation::renderHueHistogramWheel(histogram, 2048);
+    ColorHarmonization::Image<ColorHarmonization::Rgb8> imageHueHistogram = ColorHarmonization::visualisation::renderHueHistogramWheel(histogram, 1024);
 
     return ColorHarmonization::gui::toQtImage(imageHueHistogram);
 }
