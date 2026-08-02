@@ -12,6 +12,7 @@ public:
     void setImage(const QImage& image);
     void setHistogram(const QImage& image);
     void clear();
+    void setEmptyLabelText(const QString& imageText, const QString& histogramText);
 
 private:
     QLabel* titleLabel = nullptr;

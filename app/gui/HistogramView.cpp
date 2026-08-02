@@ -7,17 +7,30 @@
 #include <QPixmap>
 #include <QRectF>
 #include <QResizeEvent>
+#include <QLabel>
 
 HistogramView::HistogramView(QWidget *parent) : QGraphicsView(parent), scene(new QGraphicsScene(this)) {
     setScene(scene);
     setAlignment(Qt::AlignCenter);
     setRenderHint(QPainter::SmoothPixmapTransform, true);
+
+    emptyLabel = new QLabel("No histogram to display", viewport());
+    emptyLabel->setAlignment(Qt::AlignCenter);
+    emptyLabel->setWordWrap(true);
+    emptyLabel->setAttribute(Qt::WA_TransparentForMouseEvents);
+    emptyLabel->setGeometry(viewport()->rect());
+    emptyLabel->setStyleSheet(
+        "QLabel {"
+        "    color: #888888;"
+        "    font-size: 16px;"
+        "    background: transparent;"
+        "}"
+    );
 }
 
 void HistogramView::setHistogram(const QImage &image) {
     if (image.isNull()) {
-        scene->clear();
-        imageItem = nullptr;
+        clearImage();
         return;
     }
 
@@ -31,6 +44,7 @@ void HistogramView::setHistogram(const QImage &image) {
 
     imageItem->setPos(0.0, 0.0);
     scene->setSceneRect(imageItem->sceneBoundingRect());
+    emptyLabel->hide();
     fitImage();
 }
 
@@ -39,6 +53,8 @@ void HistogramView::clearImage() {
     imageItem = nullptr;
     resetTransform();
     scene->setSceneRect(QRectF{});
+    emptyLabel->show();
+    emptyLabel->raise();
 }
 
 void HistogramView::fitImage() {
@@ -51,6 +67,11 @@ void HistogramView::fitImage() {
 
 void HistogramView::resizeEvent(QResizeEvent* event) {
     QGraphicsView::resizeEvent(event);
+    emptyLabel->setGeometry(viewport()->rect());
     fitImage();
+}
+
+void HistogramView::setEmptyLabelText(const QString& text) {
+    emptyLabel->setText(text);
 }
 

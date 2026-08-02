@@ -90,6 +90,9 @@ void MainWindow::createCentralArea() {
     resultPanel_ = new ImagePanel("Harmonized Result",mainSplitter_);
     controlPanel = new ControlPanel(mainSplitter_);
 
+    originalPanel_->setEmptyLabelText("No image selected\nOpen an image from the toolbar", "Select an image to see the histogram");
+    resultPanel_->setEmptyLabelText("Run harmonization to see the result", "Run harmonization to see the result");
+
     mainSplitter_->addWidget(originalPanel_);
     mainSplitter_->addWidget(resultPanel_);
     mainSplitter_->addWidget(controlPanel);

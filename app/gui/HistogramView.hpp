@@ -8,6 +8,7 @@ class QMouseEvent;
 class QWheelEvent;
 class QResizeEvent;
 class QWidget;
+class QLabel;
 
 class HistogramView final : public QGraphicsView {
 public:
@@ -15,6 +16,7 @@ public:
     void setHistogram(const QImage& histogram);
     void clearImage();
     void fitImage();
+    void setEmptyLabelText(const QString& text);
 
 protected:
     void resizeEvent(QResizeEvent* event) override;
@@ -22,4 +24,5 @@ protected:
 private:
     QGraphicsScene* scene = nullptr;
     QGraphicsPixmapItem* imageItem = nullptr;
+    QLabel* emptyLabel = nullptr;
 };

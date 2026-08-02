@@ -42,3 +42,8 @@ void ImagePanel::clear() {
     imageView->clearImage();
     histogramView->clearImage();
 }
+
+void ImagePanel::setEmptyLabelText(const QString& imageText, const QString& histogramText) {
+    imageView->setEmptyLabelText(imageText);
+    histogramView->setEmptyLabelText(histogramText);
+}

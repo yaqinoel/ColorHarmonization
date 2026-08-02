@@ -3,6 +3,7 @@
 #include <QGraphicsPixmapItem>
 #include <QGraphicsScene>
 #include <QImage>
+#include <QLabel>
 #include <QPainter>
 #include <QPixmap>
 #include <QRectF>
@@ -12,12 +13,24 @@ ImageView::ImageView(QWidget* parent) : QGraphicsView(parent), scene(new QGraphi
     setScene(scene);
     setAlignment(Qt::AlignCenter);
     setRenderHint(QPainter::SmoothPixmapTransform, true);
+
+    emptyLabel = new QLabel("No image to display", viewport());
+    emptyLabel->setAlignment(Qt::AlignCenter);
+    emptyLabel->setWordWrap(true);
+    emptyLabel->setAttribute(Qt::WA_TransparentForMouseEvents);
+    emptyLabel->setGeometry(viewport()->rect());
+    emptyLabel->setStyleSheet(
+        "QLabel {"
+        "    color: #888888;"
+        "    font-size: 16px;"
+        "    background: transparent;"
+        "}"
+    );
 }
 
 void ImageView::setImage(const QImage& image) {
     if (image.isNull()) {
-        scene->clear();
-        imageItem = nullptr;
+        clearImage();
         return;
     }
 
@@ -30,9 +43,8 @@ void ImageView::setImage(const QImage& image) {
     }
 
     imageItem->setPos(0.0, 0.0);
-
     scene->setSceneRect(imageItem->sceneBoundingRect());
-
+    emptyLabel->hide();
     fitImage();
 }
 
@@ -41,6 +53,8 @@ void ImageView::clearImage() {
     imageItem = nullptr;
     resetTransform();
     scene->setSceneRect(QRectF{});
+    emptyLabel->show();
+    emptyLabel->raise();
 }
 
 void ImageView::fitImage() {
@@ -53,5 +67,10 @@ void ImageView::fitImage() {
 
 void ImageView::resizeEvent(QResizeEvent* event) {
     QGraphicsView::resizeEvent(event);
+    emptyLabel->setGeometry(viewport()->rect());
     fitImage();
+}
+
+void ImageView::setEmptyLabelText(const QString& text) {
+    emptyLabel->setText(text);
 }
