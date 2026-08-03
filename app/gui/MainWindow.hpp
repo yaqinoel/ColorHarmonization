@@ -3,16 +3,22 @@
 #include <QMainWindow>
 #include <QImage>
 
+#include <color_harmonization/harmony/TemplateMatcher.hpp>
+
 class ControlPanel;
 class QAction;
 class QSplitter;
 class QWidget;
 class ImagePanel;
 
+using ColorHarmonization::harmony::TemplateMatcherOptions;
+using ColorHarmonization::harmony::TemplateMatcher;
+using ColorHarmonization::harmony::TemplateMatchResult;
+using ColorHarmonization::harmony::HarmonyTemplate;
+
 class MainWindow final : public QMainWindow {
 public:
     explicit MainWindow(QWidget* parent = nullptr);
-    void startHarmonization();
 
 private:
     void createToolBar();
@@ -20,6 +26,7 @@ private:
     void openImage();
     void saveResult();
     void resetResult();
+    void startHarmonization();
 
     [[nodiscard]]
     QImage calculateHistogramImage(const QImage& image) const;

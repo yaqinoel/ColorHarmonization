@@ -20,6 +20,7 @@
 
 #include "QtImageConverter.hpp"
 #include "color_harmonization/color/ColorConversion.hpp"
+#include "color_harmonization/harmony/HueMapper.hpp"
 #include "color_harmonization/visualisation/HueHistogramRender.hpp"
 
 namespace {
@@ -151,6 +152,7 @@ void MainWindow::openImage() {
         originalPanel_->setHistogram(originalHueHistogramImage);
     }catch (const std::exception& exception) {
         QMessageBox::critical(this, "Processing failed", exception.what());
+        return;
     }
 
     statusBar()->showMessage(
@@ -174,7 +176,57 @@ void MainWindow::resetResult() {
 }
 
 void MainWindow::startHarmonization() {
+    using namespace ColorHarmonization;
     statusBar()->showMessage(QString("Starting Harmonization"));
+
+    if (originalImage.isNull()) {
+        statusBar()->showMessage(QString("Image is null"));
+        return;
+    }
+
+    try {
+        harmony::HueHistogramOptions options;
+        options.binCount = 360;
+        options.normalize = true;
+        options.saturationThreshold = 0.01f;
+
+        TemplateMatcherOptions matcherOptions;
+        matcherOptions.rotationStepDegrees = 0.5f;
+
+        Image<Rgb8> rgbImage = gui::fromQtImage(originalImage);
+
+        const auto templateMatcher = TemplateMatcher(matcherOptions);
+
+        auto imageHsv = color::rgbToHsv(rgbImage);
+        const auto histogram = harmony::HueHistogram::fromImage(imageHsv, options);
+        const auto templateMatchResult = templateMatcher.findBestTemplate(histogram);
+        HarmonyTemplate bestTemplate = harmony::getTemplateByType(templateMatchResult.templateType);
+
+        Image<Hsv32f> mappedHsvImage = harmony::mapImageHuesWithGraphCut(imageHsv, bestTemplate, templateMatchResult.rotationDegrees,0.5f, 30.0f);
+        Image<Rgb8> mappedRgbImage = color::hsvToRgb(mappedHsvImage);
+        QImage mappedImage = gui::toQtImage(mappedRgbImage);
+
+        const auto mappedHistogram = harmony::HueHistogram::fromImage(mappedHsvImage, options);
+        const auto mappedRgbHistogram = visualisation::renderHueHistogramWheel(mappedHistogram, 1024);
+        QImage mappedHistogramImage = gui::toQtImage(mappedRgbHistogram);
+
+        resultHueHistogramImage = mappedHistogramImage;
+        resultImage = mappedImage;
+
+        resultPanel_->setImage(resultImage);
+        resultPanel_->setHistogram(resultHueHistogramImage);
+
+        statusBar()->showMessage(
+        QString("Harmonized image by template: %1 with rotation %2 degrees")
+            .arg(harmony::toString(templateMatchResult.templateType))
+            .arg(templateMatchResult.rotationDegrees)
+        );
+    }catch (const std::exception& exception) {
+        QMessageBox::critical(this, "Harmonization failed", exception.what());
+        statusBar()->showMessage(
+        QString("Harmonization failed")
+        );
+    }
 }
 
 QImage MainWindow::calculateHistogramImage(const QImage& image) const{
