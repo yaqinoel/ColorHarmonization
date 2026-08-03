@@ -14,11 +14,11 @@ HistogramView::HistogramView(QWidget *parent) : QGraphicsView(parent), scene(new
     setAlignment(Qt::AlignCenter);
     setRenderHint(QPainter::SmoothPixmapTransform, true);
 
-    emptyLabel = new QLabel("No histogram to display", viewport());
+    emptyLabel = new QLabel("No histogram to display", this);
     emptyLabel->setAlignment(Qt::AlignCenter);
     emptyLabel->setWordWrap(true);
     emptyLabel->setAttribute(Qt::WA_TransparentForMouseEvents);
-    emptyLabel->setGeometry(viewport()->rect());
+    emptyLabel->setGeometry(viewport()->geometry());
     emptyLabel->setStyleSheet(
         "QLabel {"
         "    color: #888888;"

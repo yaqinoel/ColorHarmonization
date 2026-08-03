@@ -48,6 +48,8 @@ MainWindow::MainWindow(QWidget* parent)
     createToolBar();
     createCentralArea();
 
+    updateActionStates();
+
     statusBar()->showMessage("Ready");
 }
 
@@ -166,18 +168,30 @@ void MainWindow::openImage() {
     resultImage = {};
     resultHueHistogramImage = {};
     resultPanel_->clear();
+
+    updateActionStates();
 }
 
 void MainWindow::saveResult() {
+    if (resultImage.isNull()) {
+        return;
+    }
     statusBar()->showMessage(QString("Saved result"));
 }
 
 void MainWindow::resetResult() {
+    resultImage = {};
+    resultHueHistogramImage = {};
+    resultPanel_->clear();
+    updateActionStates();
     statusBar()->showMessage(QString("Reseted result"));
 }
 
 void MainWindow::startHarmonization() {
     using namespace ColorHarmonization;
+
+    isProcessing = true;
+    updateActionStates();
 
     statusBar()->showMessage(QString("Starting Harmonization"));
 
@@ -240,6 +254,9 @@ void MainWindow::startHarmonization() {
         QString("Harmonization failed")
         );
     }
+
+    isProcessing = false;
+    updateActionStates();
 }
 
 QImage MainWindow::calculateHistogramImage(const QImage& image) const{
@@ -259,4 +276,17 @@ QImage MainWindow::calculateHistogramImage(const QImage& image) const{
         visualisation::renderHueHistogramWheel(histogram, 1024);
 
     return gui::toQtImage(imageHueHistogram);
+}
+
+void MainWindow::updateActionStates() {
+    const bool hasOriginalImage = !originalImage.isNull();
+    const bool hasResultImage = !resultImage.isNull();
+
+    openImageAction_->setEnabled(!isProcessing);
+
+    saveImageAction_->setEnabled(hasResultImage && !isProcessing);
+
+    resetAction_->setEnabled(hasResultImage && !isProcessing);
+
+    controlPanel->setEnabled(hasOriginalImage && !isProcessing);
 }

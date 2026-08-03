@@ -20,6 +20,7 @@ private:
     void saveResult();
     void resetResult();
     void startHarmonization();
+    void updateActionStates();
 
     [[nodiscard]]
     QImage calculateHistogramImage(const QImage& image) const;
@@ -38,4 +39,6 @@ private:
     QImage originalHueHistogramImage;
     QImage resultImage;
     QImage resultHueHistogramImage;
+
+    bool isProcessing = false;
 };

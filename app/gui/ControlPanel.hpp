@@ -10,6 +10,7 @@ class ControlPanel final : public QWidget {
 
 public:
     explicit ControlPanel(QWidget* parent = nullptr);
+    void setEnabled(bool enabled);
 
 signals:
     void startRequested();

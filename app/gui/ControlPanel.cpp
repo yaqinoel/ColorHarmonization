@@ -38,3 +38,7 @@ ControlPanel::ControlPanel(QWidget *parent) : QWidget(parent) {
     mainLayout->addWidget(scrollArea, 1);
     mainLayout->addWidget(startButton, 0);
 }
+
+void ControlPanel::setEnabled(bool enabled) {
+    startButton->setEnabled(enabled);
+}
