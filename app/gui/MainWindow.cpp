@@ -21,6 +21,7 @@
 #include "QtImageConverter.hpp"
 #include "color_harmonization/color/ColorConversion.hpp"
 #include "color_harmonization/harmony/HueMapper.hpp"
+#include "color_harmonization/harmony/TemplateMatcher.hpp"
 #include "color_harmonization/visualisation/HueHistogramRender.hpp"
 
 namespace {
@@ -177,6 +178,7 @@ void MainWindow::resetResult() {
 
 void MainWindow::startHarmonization() {
     using namespace ColorHarmonization;
+
     statusBar()->showMessage(QString("Starting Harmonization"));
 
     if (originalImage.isNull()) {
@@ -190,24 +192,35 @@ void MainWindow::startHarmonization() {
         options.normalize = true;
         options.saturationThreshold = 0.01f;
 
-        TemplateMatcherOptions matcherOptions;
+        harmony::TemplateMatcherOptions matcherOptions;
         matcherOptions.rotationStepDegrees = 0.5f;
 
         Image<Rgb8> rgbImage = gui::fromQtImage(originalImage);
 
-        const auto templateMatcher = TemplateMatcher(matcherOptions);
+        const auto templateMatcher = harmony::TemplateMatcher(matcherOptions);
 
         auto imageHsv = color::rgbToHsv(rgbImage);
-        const auto histogram = harmony::HueHistogram::fromImage(imageHsv, options);
+        const auto histogram =
+            harmony::HueHistogram::fromImage(imageHsv, options);
         const auto templateMatchResult = templateMatcher.findBestTemplate(histogram);
-        HarmonyTemplate bestTemplate = harmony::getTemplateByType(templateMatchResult.templateType);
+        harmony::HarmonyTemplate bestTemplate =
+            harmony::getTemplateByType(templateMatchResult.templateType);
 
-        Image<Hsv32f> mappedHsvImage = harmony::mapImageHuesWithGraphCut(imageHsv, bestTemplate, templateMatchResult.rotationDegrees,0.5f, 30.0f);
+        Image<Hsv32f> mappedHsvImage =
+            harmony::mapImageHuesWithGraphCut(
+                imageHsv,
+                bestTemplate,
+                templateMatchResult.rotationDegrees,
+                0.5f,
+                30.0f
+            );
         Image<Rgb8> mappedRgbImage = color::hsvToRgb(mappedHsvImage);
         QImage mappedImage = gui::toQtImage(mappedRgbImage);
 
-        const auto mappedHistogram = harmony::HueHistogram::fromImage(mappedHsvImage, options);
-        const auto mappedRgbHistogram = visualisation::renderHueHistogramWheel(mappedHistogram, 1024);
+        const auto mappedHistogram =
+            harmony::HueHistogram::fromImage(mappedHsvImage, options);
+        const auto mappedRgbHistogram =
+            visualisation::renderHueHistogramWheel(mappedHistogram, 1024);
         QImage mappedHistogramImage = gui::toQtImage(mappedRgbHistogram);
 
         resultHueHistogramImage = mappedHistogramImage;
@@ -230,16 +243,20 @@ void MainWindow::startHarmonization() {
 }
 
 QImage MainWindow::calculateHistogramImage(const QImage& image) const{
-    ColorHarmonization::harmony::HueHistogramOptions options;
+    using namespace ColorHarmonization;
+
+    harmony::HueHistogramOptions options;
     options.binCount = 360;
     options.normalize = true;
     options.saturationThreshold = 0.01f;
 
-    ColorHarmonization::Image<ColorHarmonization::Rgb8> rgbImage = ColorHarmonization::gui::fromQtImage(image);
+    Image<Rgb8> rgbImage = gui::fromQtImage(image);
 
-    auto imageHsv = ColorHarmonization::color::rgbToHsv(rgbImage);
-    const auto histogram = ColorHarmonization::harmony::HueHistogram::fromImage(imageHsv, options);
-    ColorHarmonization::Image<ColorHarmonization::Rgb8> imageHueHistogram = ColorHarmonization::visualisation::renderHueHistogramWheel(histogram, 1024);
+    auto imageHsv = color::rgbToHsv(rgbImage);
+    const auto histogram =
+        harmony::HueHistogram::fromImage(imageHsv, options);
+    Image<Rgb8> imageHueHistogram =
+        visualisation::renderHueHistogramWheel(histogram, 1024);
 
-    return ColorHarmonization::gui::toQtImage(imageHueHistogram);
+    return gui::toQtImage(imageHueHistogram);
 }
