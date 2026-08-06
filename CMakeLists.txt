@@ -19,6 +19,8 @@ target_include_directories(maxflow
 
 # static library
 add_library(color_harmonization_core STATIC
+        src/color_harmonization/Harmonizer.cpp
+
         src/color_harmonization/image/StbImplementation.cpp
         src/color_harmonization/image/ImageIO.cpp
 
