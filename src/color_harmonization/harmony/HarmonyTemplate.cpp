@@ -257,4 +257,17 @@ namespace ColorHarmonization::harmony {
         return std::max(0.0f, distanceToCenter - halfWidth);
     }
 
+    float directedDistanceToSector(const float hue, const Sector sector, float rotationDegrees, MoveDirection direction) {
+        const float center = normalizeHue(sector.center + rotationDegrees);
+        const float halfWidth = sector.width / 2.0f;
+
+        if (circularDistance(hue, center) <= halfWidth) {
+            return 0.0f;
+        }
+
+        float distanceToCenter = directedCircularDistance(hue, center, direction);
+
+        return std::max(0.0f, distanceToCenter - halfWidth);
+    }
+
 }

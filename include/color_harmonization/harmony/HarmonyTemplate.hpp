@@ -71,4 +71,7 @@ namespace ColorHarmonization::harmony {
     [[nodiscard]]
     float distanceToSector(const float hue, const Sector sector, float rotationDegrees);
 
+    [[nodiscard]]
+    float directedDistanceToSector(const float hue, const Sector sector, float rotationDegrees, MoveDirection direction);
+
 }   // namespace ColorHarmonization::harmony

@@ -1,4 +1,6 @@
 #pragma once
+
+#include <vector>
 #include <color_harmonization/harmony/HarmonyTemplate.hpp>
 
 namespace ColorHarmonization::harmony {
@@ -13,13 +15,19 @@ namespace ColorHarmonization::harmony {
     float mapHueToNearestCenter(float hue, const HarmonyTemplate& harmonyTemplate, float rotationDegrees);
 
     [[nodiscard]]
+    float mapHueToNearestCenterByDirection(float hue, const HarmonyTemplate& harmonyTemplate, float rotationDegrees, MoveDirection direction);
+
+    [[nodiscard]]
     float mapHueLinearly(float hue, const HarmonyTemplate& harmonyTemplate, float rotationDegrees);
 
     [[nodiscard]]
-    float mapHueWithGaussian(float hue, const HarmonyTemplate& harmonyTemplate, float rotationDegrees, float sigma);
+    float mapHueLinearlyByDirection(float hue, const HarmonyTemplate& harmonyTemplate, float rotationDegrees, MoveDirection direction);
 
     [[nodiscard]]
-    float mapHueWithGaussianByLabelMap(float hue, const HarmonyTemplate& harmonyTemplate, float rotationDegrees, float sigma, MoveDirection direction);
+    float mapHueWithGaussian(float hue, const HarmonyTemplate& harmonyTemplate, float rotationDegrees, float sigmaScale);
+
+    [[nodiscard]]
+    float mapHueWithGaussianByDirection(float hue, const HarmonyTemplate& harmonyTemplate, float rotationDegrees, float sigmaScale, MoveDirection direction);
 
     [[nodiscard]]
     Image<Hsv32f> mapImageHuesToNearestCenter(
@@ -44,14 +52,13 @@ namespace ColorHarmonization::harmony {
     );
 
     [[nodiscard]]
-    Image<Hsv32f> mapImageHuesWithGraphCut(
-        const Image<Hsv32f>& image,
-        const HarmonyTemplate& harmonyTemplate,
-        float rotationDegrees,
-        float sigmaScale,
-        float lambda
+    std::vector<MoveDirection> calculateLabelMapByGraphCut(
+            const Image<Hsv32f>& image,
+            const HarmonyTemplate& harmonyTemplate,
+            float rotationDegrees,
+            float lambda,
+            float colorSigma
     );
-
 
 
 }
