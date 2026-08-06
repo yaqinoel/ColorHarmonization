@@ -21,6 +21,9 @@ namespace ColorHarmonization::harmony {
         [[nodiscard]]
         TemplateMatchResult findBestTemplate(const HueHistogram& histogram) const;
 
+        [[nodiscard]]
+        TemplateMatchResult findBestRotation(const HueHistogram& histogram, HarmonyTemplateType templateType) const;
+
     private:
         TemplateMatcherOptions options_;
 

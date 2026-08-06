@@ -20,7 +20,6 @@ namespace ColorHarmonization::harmony {
         for (const HarmonyTemplate& harmonyTemplate : templates) {
             for (float rotation = 0.0f; rotation < 360.0f; rotation += options_.rotationStepDegrees) {
                 const float cost = templateCost(histogram, harmonyTemplate, rotation);
-
                 if (cost < bestResult.cost) {
                     bestResult.cost = cost;
                     bestResult.templateType = harmonyTemplate.type();
@@ -31,5 +30,24 @@ namespace ColorHarmonization::harmony {
 
         return bestResult;
     }   // findBestTemplate
+
+    TemplateMatchResult TemplateMatcher::findBestRotation(const HueHistogram& histogram, HarmonyTemplateType templateType) const {
+        HarmonyTemplate harmonyTemplate = getTemplateByType(templateType);
+
+        TemplateMatchResult bestResult;
+        bestResult.cost = std::numeric_limits<float>::max();
+
+        for (float rotation = 0.0f; rotation < 360.0f; rotation += options_.rotationStepDegrees) {
+            const float cost = templateCost(histogram, harmonyTemplate, rotation);
+            if (cost < bestResult.cost) {
+                bestResult.cost = cost;
+                bestResult.templateType = harmonyTemplate.type();
+                bestResult.rotationDegrees = rotation;
+            }
+        }
+
+        return bestResult;
+
+    }   // findBestRotation
 
 }
