@@ -175,6 +175,26 @@ namespace ColorHarmonization::harmony {
         });
     }
 
+    Image<Hsv32f> mapImageHuesToNearestCenter(
+        const Image<Hsv32f>& image,
+        const HarmonyTemplate& harmonyTemplate,
+        float rotationDegrees,
+        const std::vector<MoveDirection>& directionsLabelMap
+    ) {
+        const std::size_t width = image.width();
+        const std::size_t expectedSize = image.width() * image.height();
+        if (directionsLabelMap.size() != expectedSize) {
+            throw std::invalid_argument("Direction label map size does not match image size");
+        }
+        return image.mapPixelsWithCoords<Hsv32f>(
+            [&harmonyTemplate, rotationDegrees, &directionsLabelMap, width](std::size_t x, std::size_t y, const Hsv32f& pixel) {
+                Hsv32f mappedPixel = pixel;
+                std::size_t index = x + y * width;
+                mappedPixel.h = mapHueToNearestCenterByDirection(pixel.h, harmonyTemplate, rotationDegrees, directionsLabelMap[index]);
+                return mappedPixel;
+        });
+    }
+
     Image<Hsv32f> mapImageHuesLinearly(
         const Image<Hsv32f>& image,
         const HarmonyTemplate& harmonyTemplate,
@@ -187,7 +207,26 @@ namespace ColorHarmonization::harmony {
                 return mappedPixel;
             }
         );
+    }
 
+    Image<Hsv32f> mapImageHuesLinearly(
+        const Image<Hsv32f>& image,
+        const HarmonyTemplate& harmonyTemplate,
+        float rotationDegrees,
+        const std::vector<MoveDirection>& directionsLabelMap
+    ) {
+        const std::size_t width = image.width();
+        const std::size_t expectedSize = image.width() * image.height();
+        if (directionsLabelMap.size() != expectedSize) {
+            throw std::invalid_argument("Direction label map size does not match image size");
+        }
+        return image.mapPixelsWithCoords<Hsv32f>(
+            [&harmonyTemplate, rotationDegrees, &directionsLabelMap, width](std::size_t x, std::size_t y, const Hsv32f& pixel) {
+                Hsv32f mappedPixel = pixel;
+                std::size_t index = x + y * width;
+                mappedPixel.h = mapHueLinearlyByDirection(pixel.h, harmonyTemplate, rotationDegrees, directionsLabelMap[index]);
+                return mappedPixel;
+        });
     }
 
     Image<Hsv32f> mapImageHuesWithGaussian(
@@ -206,6 +245,30 @@ namespace ColorHarmonization::harmony {
                 return mappedPixel;
             }
         );
+    }
+
+    Image<Hsv32f> mapImageHuesWithGaussian(
+        const Image<Hsv32f>& image,
+        const HarmonyTemplate& harmonyTemplate,
+        float rotationDegrees,
+        float sigmaScale,
+        const std::vector<MoveDirection>& directionsLabelMap
+    ) {
+        if (sigmaScale <= 0.f) {
+            throw std::invalid_argument("sigma must be positive");
+        }
+        const std::size_t expectedSize = image.width() * image.height();
+        if (directionsLabelMap.size() != expectedSize) {
+            throw std::invalid_argument("Direction label map size does not match image size");
+        }
+        const std::size_t width = image.width();
+        return image.mapPixelsWithCoords<Hsv32f>(
+            [&harmonyTemplate, rotationDegrees, sigmaScale, &directionsLabelMap, width](std::size_t x, std::size_t y, const Hsv32f& pixel) {
+                Hsv32f mappedPixel = pixel;
+                std::size_t index = x + y * width;
+                mappedPixel.h = mapHueWithGaussianByDirection(pixel.h, harmonyTemplate, rotationDegrees, sigmaScale, directionsLabelMap[index]);
+                return mappedPixel;
+        });
     }
 
     std::vector<MoveDirection> calculateLabelMapByGraphCut(

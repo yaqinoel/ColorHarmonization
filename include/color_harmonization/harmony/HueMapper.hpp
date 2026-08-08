@@ -37,10 +37,26 @@ namespace ColorHarmonization::harmony {
     );
 
     [[nodiscard]]
+    Image<Hsv32f> mapImageHuesToNearestCenter(
+        const Image<Hsv32f>& image,
+        const HarmonyTemplate& harmonyTemplate,
+        float rotationDegrees,
+        const std::vector<MoveDirection>& directionsLabelMap
+    );
+
+    [[nodiscard]]
     Image<Hsv32f> mapImageHuesLinearly(
         const Image<Hsv32f>& image,
         const HarmonyTemplate& harmonyTemplate,
         float rotationDegrees
+    );
+
+    [[nodiscard]]
+    Image<Hsv32f> mapImageHuesLinearly(
+        const Image<Hsv32f>& image,
+        const HarmonyTemplate& harmonyTemplate,
+        float rotationDegrees,
+        const std::vector<MoveDirection>& directionsLabelMap
     );
 
     [[nodiscard]]
@@ -49,6 +65,15 @@ namespace ColorHarmonization::harmony {
         const HarmonyTemplate& harmonyTemplate,
         float rotationDegrees,
         float sigmaScale
+    );
+
+    [[nodiscard]]
+    Image<Hsv32f> mapImageHuesWithGaussian(
+        const Image<Hsv32f>& image,
+        const HarmonyTemplate& harmonyTemplate,
+        float rotationDegrees,
+        float sigmaScale,
+        const std::vector<MoveDirection>& directionsLabelMap
     );
 
     [[nodiscard]]

@@ -22,13 +22,61 @@ namespace ColorHarmonization {
             }
         }
 
+        if (options.autoTemplate && !options.autoRotation) {
+            throw std::invalid_argument("Automatic template selection requires automatic rotation");
+        }
+
         Image<Hsv32f> hsvImage = color::rgbToHsv(image);
+        harmony::TemplateMatcher templateMatcher = harmony::TemplateMatcher(options.templateMatcherOptions);
+        const harmony::HueHistogram histogram = harmony::HueHistogram::fromImage(hsvImage, options.hueHistogramOptions);
 
-        const harmony::HueHistogram histogram = harmony::HueHistogram::fromImage(hsvImage);
+        harmony::TemplateMatchResult matchResult;
 
+        if (options.autoTemplate && options.autoRotation) {
+            matchResult = templateMatcher.findBestTemplate(histogram);
+        } else if (!options.autoTemplate && options.autoRotation) {
+            matchResult = templateMatcher.findBestRotation(histogram, options.manualTemplateType);
+        } else if (!options.autoTemplate && !options.autoRotation) {
+            matchResult.templateType = options.manualTemplateType;
+            matchResult.rotationDegrees = harmony::normalizeHue(options.manualRotation);
+        }
 
+        Image<Hsv32f> mappedHsvImage = hsvImage;
 
+        harmony::HarmonyTemplate selectedTemplate = harmony::getTemplateByType(matchResult.templateType);
 
+        if (!options.graphCutEnabled) {
+            switch (options.method) {
+                case MappingMethod::NearestCenter:
+                    mappedHsvImage = harmony::mapImageHuesToNearestCenter(hsvImage, selectedTemplate, matchResult.rotationDegrees);
+                    break;
+                case MappingMethod::Linear:
+                    mappedHsvImage = harmony::mapImageHuesLinearly(hsvImage, selectedTemplate, matchResult.rotationDegrees);
+                    break;
+                case MappingMethod::Gaussian:
+                    mappedHsvImage = harmony::mapImageHuesWithGaussian(hsvImage, selectedTemplate, matchResult.rotationDegrees, options.gaussianSigmaScale);
+                    break;
+            }
+        } else {
+            std::vector<harmony::MoveDirection> directionsLabelMap = harmony::calculateLabelMapByGraphCut(hsvImage, selectedTemplate, matchResult.rotationDegrees, options.graphCutLambda, options.graphCutColorSigma);
+            switch (options.method) {
+                case MappingMethod::NearestCenter:
+                    mappedHsvImage = harmony::mapImageHuesToNearestCenter(hsvImage, selectedTemplate, matchResult.rotationDegrees, directionsLabelMap);
+                    break;
+                case MappingMethod::Linear:
+                    mappedHsvImage = harmony::mapImageHuesLinearly(hsvImage, selectedTemplate, matchResult.rotationDegrees, directionsLabelMap);
+                    break;
+                case MappingMethod::Gaussian:
+                    mappedHsvImage = harmony::mapImageHuesWithGaussian(hsvImage, selectedTemplate, matchResult.rotationDegrees, options.gaussianSigmaScale, directionsLabelMap);
+                    break;
+            }
+        }
 
+        Image<Rgb8> mappedRgbImage = color::hsvToRgb(mappedHsvImage);
+
+        return HarmonizationResult {
+            mappedRgbImage,
+            matchResult
+        };
     }
 }

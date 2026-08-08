@@ -22,11 +22,11 @@ namespace ColorHarmonization {
         float gaussianSigmaScale = 0.5f;
         float graphCutColorSigma = 30.f;
         float graphCutLambda = 0.5f;
-        float templateSearchStepDegrees = 0.5f;
 
         harmony::HarmonyTemplateType manualTemplateType = harmony::HarmonyTemplateType::X;
         MappingMethod method = MappingMethod::Gaussian;
         harmony::HueHistogramOptions hueHistogramOptions;
+        harmony::TemplateMatcherOptions templateMatcherOptions;
     };
 
     struct HarmonizationResult {
