@@ -102,15 +102,15 @@ void MainWindow::createCentralArea() {
 
     mainSplitter_->setStretchFactor(0, 4);
     mainSplitter_->setStretchFactor(1, 4);
-    mainSplitter_->setStretchFactor(2, 2);
+    mainSplitter_->setStretchFactor(2, 3);
 
     mainSplitter_->setChildrenCollapsible(false);
 
     originalPanel_->setMinimumWidth(200);
     resultPanel_->setMinimumWidth(200);
-    controlPanel->setMinimumWidth(200);
+    controlPanel->setMinimumWidth(260);
 
-    mainSplitter_->setSizes({500, 500, 300});
+    mainSplitter_->setSizes({400, 400, 300});
 
     setCentralWidget(mainSplitter_);
 
@@ -201,7 +201,8 @@ void MainWindow::startHarmonization() {
 
     try {
         const Image<Rgb8> rgbImage = gui::fromQtImage(originalImage);
-        const HarmonizationResult harmonizationResult = harmonize(rgbImage);
+        const HarmonizationOptions options = controlPanel->harmonizationOptions();
+        const HarmonizationResult harmonizationResult = harmonize(rgbImage, options);
 
         resultImage = gui::toQtImage(harmonizationResult.image);
         resultHueHistogramImage = calculateHistogramImage(resultImage);
