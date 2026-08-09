@@ -104,7 +104,7 @@ namespace ColorHarmonization::harmony {
         const float nearestCenter = normalizeHue(nearestSector.center + rotationDegrees);
 
         const float halfWidth = nearestSector.width / 2.0f;
-        const float offsetFromCenterByMoveDirection = directedCircularDistance(hue, nearestCenter, direction);
+        const float offsetFromCenterByMoveDirection = circularDistance(hue, nearestCenter);
         const float side = direction == MoveDirection::Positive ? -1.0f : 1.0f;
         const float mappedOffset =  side * offsetFromCenterByMoveDirection / 360.f * halfWidth;
 
@@ -154,7 +154,7 @@ namespace ColorHarmonization::harmony {
 
         const float w = nearestSector.width / 2.0f;
         const float sigma = nearestSector.width * sigmaScale;
-        const float offsetFromCenterByMoveDirection = directedCircularDistance(hue, nearestCenter, direction);
+        const float offsetFromCenterByMoveDirection = circularDistance(hue, nearestCenter);
         const float g = gaussian(offsetFromCenterByMoveDirection, sigma);
         const float side = direction == MoveDirection::Positive ? -1.0f : 1.0f;
 
