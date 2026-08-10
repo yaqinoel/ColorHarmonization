@@ -38,6 +38,17 @@ void ImagePanel::setHistogram(const QImage& image) {
     histogramView->setHistogram(image);
 }
 
+void ImagePanel::setTemplateOverlay(
+    const ColorHarmonization::harmony::HarmonyTemplate& harmonyTemplate,
+    float rotationDegrees
+) {
+    histogramView->setTemplateOverlay(harmonyTemplate, rotationDegrees);
+}
+
+void ImagePanel::clearTemplateOverlay() {
+    histogramView->clearTemplateOverlay();
+}
+
 void ImagePanel::clear() {
     imageView->clearImage();
     histogramView->clearImage();

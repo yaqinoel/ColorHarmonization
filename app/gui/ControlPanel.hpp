@@ -20,6 +20,7 @@ public:
 
 signals:
     void startRequested();
+    void templatePreviewChanged();
 
 private:
     void createUi();

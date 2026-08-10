@@ -20,6 +20,7 @@ private:
     void saveResult();
     void resetResult();
     void startHarmonization();
+    void updateTemplatePreview();
     void updateActionStates();
 
     [[nodiscard]]

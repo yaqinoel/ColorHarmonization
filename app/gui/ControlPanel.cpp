@@ -170,9 +170,17 @@ void ControlPanel::connectControlSignals() {
     });
     connect(autoTemplateCheckBox, &QCheckBox::toggled, this, [this](bool) {
         updateControlStates();
+        emit templatePreviewChanged();
     });
     connect(autoRotationCheckBox, &QCheckBox::toggled, this, [this](bool) {
         updateControlStates();
+        emit templatePreviewChanged();
+    });
+    connect(templateComboBox, &QComboBox::currentIndexChanged, this, [this](int) {
+        emit templatePreviewChanged();
+    });
+    connect(manualRotationSpinBox, &QDoubleSpinBox::valueChanged, this, [this](double) {
+        emit templatePreviewChanged();
     });
     connect(graphCutCheckBox, &QCheckBox::toggled, this, [this](bool) {
         updateControlStates();

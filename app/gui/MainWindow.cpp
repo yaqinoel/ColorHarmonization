@@ -120,6 +120,13 @@ void MainWindow::createCentralArea() {
         this,
         &MainWindow::startHarmonization
     );
+
+    connect(
+        controlPanel,
+        &ControlPanel::templatePreviewChanged,
+        this,
+        &MainWindow::updateTemplatePreview
+    );
 }
 
 void MainWindow::openImage() {
@@ -152,6 +159,7 @@ void MainWindow::openImage() {
 
         originalPanel_->setImage(originalImage);
         originalPanel_->setHistogram(originalHueHistogramImage);
+        updateTemplatePreview();
     }catch (const std::exception& exception) {
         QMessageBox::critical(this, "Processing failed", exception.what());
         return;
@@ -182,6 +190,7 @@ void MainWindow::resetResult() {
     resultImage = {};
     resultHueHistogramImage = {};
     resultPanel_->clear();
+    updateTemplatePreview();
     updateActionStates();
     statusBar()->showMessage(QString("Reseted result"));
 }
@@ -210,6 +219,22 @@ void MainWindow::startHarmonization() {
         resultPanel_->setImage(resultImage);
         resultPanel_->setHistogram(resultHueHistogramImage);
 
+        const harmony::HarmonyTemplate matchedTemplate =
+            harmony::getTemplateByType(
+                harmonizationResult.matchResult.templateType
+            );
+        const float matchedRotation =
+            harmonizationResult.matchResult.rotationDegrees;
+
+        originalPanel_->setTemplateOverlay(
+            matchedTemplate,
+            matchedRotation
+        );
+        resultPanel_->setTemplateOverlay(
+            matchedTemplate,
+            matchedRotation
+        );
+
         statusBar()->showMessage(
         QString("Harmonized image by template: %1 with rotation %2 degrees")
             .arg(harmony::toString(harmonizationResult.matchResult.templateType))
@@ -224,6 +249,31 @@ void MainWindow::startHarmonization() {
 
     isProcessing = false;
     updateActionStates();
+}
+
+void MainWindow::updateTemplatePreview() {
+    using namespace ColorHarmonization;
+
+    if (originalImage.isNull()) {
+        originalPanel_->clearTemplateOverlay();
+        return;
+    }
+
+    const HarmonizationOptions options =
+        controlPanel->harmonizationOptions();
+
+    if (options.autoTemplate || options.autoRotation) {
+        originalPanel_->clearTemplateOverlay();
+        return;
+    }
+
+    const harmony::HarmonyTemplate selectedTemplate =
+        harmony::getTemplateByType(options.manualTemplateType);
+
+    originalPanel_->setTemplateOverlay(
+        selectedTemplate,
+        options.manualRotation
+    );
 }
 
 QImage MainWindow::calculateHistogramImage(const QImage& image) const{
