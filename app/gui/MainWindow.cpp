@@ -183,6 +183,19 @@ void MainWindow::saveResult() {
     if (resultImage.isNull()) {
         return;
     }
+
+    const QString filePath = QFileDialog::getSaveFileName(
+        this,
+        "Save harmonization result",
+        {},
+        "Images (*.png *.jpg *.jpeg)"
+        );
+
+    if (!filePath.isEmpty()) {
+        if (!resultImage.save(filePath)) {
+            QMessageBox::warning(this, "error", "Failed to save result");
+        }
+    }
     statusBar()->showMessage(QString("Saved result"));
 }
 
