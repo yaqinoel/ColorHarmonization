@@ -10,7 +10,9 @@
 #include <QPushButton>
 #include <QScrollArea>
 #include <QSignalBlocker>
+#include <QSlider>
 #include <QSpinBox>
+#include <QtGlobal>
 #include <QVBoxLayout>
 
 ControlPanel::ControlPanel(QWidget* parent)
@@ -81,6 +83,15 @@ void ControlPanel::createUi() {
     manualRotationSpinBox->setSingleStep(0.5);
     manualRotationSpinBox->setSuffix(" deg");
 
+    manualRotationSlider = new QSlider(templateGroup);
+    manualRotationSlider->setOrientation(Qt::Horizontal);
+    manualRotationSlider->setRange(0, 3599);
+    manualRotationSlider->setValue(0);
+    manualRotationSlider->setSingleStep(1);
+    manualRotationSlider->setPageStep(50);
+    manualRotationSlider->setTickInterval(900);
+    manualRotationSlider->setTickPosition(QSlider::TicksBelow);
+
     rotationStepSpinBox = new QDoubleSpinBox(templateGroup);
     rotationStepSpinBox->setRange(0.1, 359.9);
     rotationStepSpinBox->setDecimals(1);
@@ -92,6 +103,7 @@ void ControlPanel::createUi() {
     templateLayout->addRow("Template", templateComboBox);
     templateLayout->addRow(autoRotationCheckBox);
     templateLayout->addRow("Manual rotation", manualRotationSpinBox);
+    templateLayout->addRow("Manual rotation slider", manualRotationSlider);
     templateLayout->addRow("Search step", rotationStepSpinBox);
 
     auto* graphCutGroup = new QGroupBox("Graph Cut", settingsWidget);
@@ -179,11 +191,18 @@ void ControlPanel::connectControlSignals() {
     connect(templateComboBox, &QComboBox::currentIndexChanged, this, [this](int) {
         emit templatePreviewChanged();
     });
-    connect(manualRotationSpinBox, &QDoubleSpinBox::valueChanged, this, [this](double) {
-        emit templatePreviewChanged();
-    });
     connect(graphCutCheckBox, &QCheckBox::toggled, this, [this](bool) {
         updateControlStates();
+    });
+    connect(manualRotationSlider, &QSlider::valueChanged, this, [this](int value) {
+        const QSignalBlocker blocker(manualRotationSpinBox);
+        manualRotationSpinBox->setValue(value / 10.0);
+        emit templatePreviewChanged();
+    });
+    connect(manualRotationSpinBox, &QDoubleSpinBox::valueChanged, this, [this](double value) {
+        const QSignalBlocker blocker(manualRotationSlider);
+        manualRotationSlider->setValue(qRound(value * 10.0));
+        emit templatePreviewChanged();
     });
 }
 
@@ -206,6 +225,7 @@ void ControlPanel::updateControlStates() {
 
     const bool autoRotation = autoRotationCheckBox->isChecked();
     manualRotationSpinBox->setEnabled(!autoTemplate && !autoRotation);
+    manualRotationSlider->setEnabled(!autoTemplate && !autoRotation);
     rotationStepSpinBox->setEnabled(autoRotation);
 
     const bool graphCutEnabled = graphCutCheckBox->isChecked();

@@ -3,6 +3,7 @@
 #include <QWidget>
 #include <color_harmonization/Harmonizer.hpp>
 
+class QSlider;
 class QCheckBox;
 class QComboBox;
 class QDoubleSpinBox;
@@ -34,6 +35,7 @@ private:
     QComboBox* templateComboBox = nullptr;
     QCheckBox* autoRotationCheckBox = nullptr;
     QDoubleSpinBox* manualRotationSpinBox = nullptr;
+    QSlider* manualRotationSlider = nullptr;
     QDoubleSpinBox* rotationStepSpinBox = nullptr;
 
     QCheckBox* graphCutCheckBox = nullptr;
