@@ -115,10 +115,10 @@ void ControlPanel::createUi() {
     graphCutCheckBox->setChecked(true);
 
     graphCutLambdaSpinBox = new QDoubleSpinBox(graphCutGroup);
-    graphCutLambdaSpinBox->setRange(0.01, 100.0);
     graphCutLambdaSpinBox->setDecimals(2);
-    graphCutLambdaSpinBox->setSingleStep(0.1);
-    graphCutLambdaSpinBox->setValue(0.5);
+    graphCutLambdaSpinBox->setRange(0.0, 20.0);
+    graphCutLambdaSpinBox->setSingleStep(0.01);
+    graphCutLambdaSpinBox->setValue(5);
 
     graphCutColorSigmaSpinBox = new QDoubleSpinBox(graphCutGroup);
     graphCutColorSigmaSpinBox->setRange(0.1, 180.0);

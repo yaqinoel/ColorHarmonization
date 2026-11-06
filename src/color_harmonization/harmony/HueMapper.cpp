@@ -4,6 +4,7 @@
 #include <cmath>
 #include <color_harmonization/harmony/HueMapper.hpp>
 #include "graph.h"
+#include "color_harmonization/image/ImageIO.hpp"
 
 namespace ColorHarmonization::harmony {
 
@@ -285,8 +286,9 @@ namespace ColorHarmonization::harmony {
             );
         }
 
-        if (lambda <= 0.0f || colorSigma <= 0.0f) {
-            throw std::invalid_argument("lambda or color sigma must be positive");
+        if (!std::isfinite(lambda) || lambda < 0.0f ||
+            !std::isfinite(colorSigma) || colorSigma <= 0.0f) {
+            throw std::invalid_argument("lambda must be non-negative and color sigma must be positive");
         }
 
         typedef Graph<float, float, float> GraphType;
@@ -304,8 +306,8 @@ namespace ColorHarmonization::harmony {
                 const Sector leftSector = findNearestSectorByDirection(normalizedHue, harmonyTemplate,rotationDegrees, MoveDirection::Negative);
                 const Sector rightSector = findNearestSectorByDirection(normalizedHue, harmonyTemplate,rotationDegrees, MoveDirection::Positive);
 
-                const float costToLeftSector = directedDistanceToSector(normalizedHue, leftSector, rotationDegrees, MoveDirection::Negative) * pixel.s * pixel.v;
-                const float costToRightSector = directedDistanceToSector(normalizedHue, rightSector, rotationDegrees, MoveDirection::Positive) * pixel.s * pixel.v;
+                const float costToLeftSector = directedDistanceToSector(normalizedHue, leftSector, rotationDegrees, MoveDirection::Negative) / 360.0f * pixel.s * pixel.v;
+                const float costToRightSector = directedDistanceToSector(normalizedHue, rightSector, rotationDegrees, MoveDirection::Positive) / 360.0f * pixel.s * pixel.v;
 
                 std::size_t node = y * image.width() + x;
 
@@ -316,9 +318,10 @@ namespace ColorHarmonization::harmony {
                     Hsv32f pixelRight = image.at(x+1, y);
 
                     const float hueDiff = circularDistance(pixel.h, pixelRight.h);
-                    const float saturationWeight = pixel.s * pixelRight.s;
+                    const float saturationWeight = std::max(pixel.s, pixelRight.s);
+                    const float valueWeight = std::max(pixel.v, pixelRight.v);
 
-                    const float penalty = lambda * saturationWeight * std::exp(-(hueDiff * hueDiff) / (2.0f * colorSigma * colorSigma));
+                    const float penalty = lambda * saturationWeight * valueWeight * std::exp(-(hueDiff * hueDiff) / (2.0f * colorSigma * colorSigma));
                     graph->add_edge(node, node_right, penalty, penalty);
                 }
 
@@ -327,9 +330,10 @@ namespace ColorHarmonization::harmony {
                     Hsv32f pixelDown = image.at(x, y+1);
 
                     const float hueDiff = circularDistance(pixel.h, pixelDown.h);
-                    const float saturationWeight = pixel.s * pixelDown.s;
+                    const float saturationWeight = std::max(pixel.s, pixelDown.s);
+                    const float valueWeight = std::max(pixel.v, pixelDown.v);
 
-                    const float penalty = lambda * saturationWeight * std::exp(-(hueDiff * hueDiff) / (2.0f * colorSigma * colorSigma));
+                    const float penalty = lambda * saturationWeight * valueWeight * std::exp(-(hueDiff * hueDiff) / (2.0f * colorSigma * colorSigma));
                     graph->add_edge(node, node_down, penalty, penalty);
                 }
         });

@@ -21,7 +21,7 @@ namespace ColorHarmonization {
         float manualRotation = 0.f;
         float gaussianSigmaScale = 0.5f;
         float graphCutColorSigma = 30.f;
-        float graphCutLambda = 0.5f;
+        float graphCutLambda = 5.0f;
 
         harmony::HarmonyTemplateType manualTemplateType = harmony::HarmonyTemplateType::X;
         MappingMethod method = MappingMethod::Gaussian;

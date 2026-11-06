@@ -1,3 +1,4 @@
+#include <cmath>
 #include <stdexcept>
 #include <vector>
 
@@ -17,8 +18,9 @@ namespace ColorHarmonization {
         }
 
         if (options.graphCutEnabled) {
-            if (options.graphCutLambda <= 0.0f || options.graphCutColorSigma <= 0.0f) {
-                throw std::invalid_argument("Graph Cut parameters must be positive");
+            if (!std::isfinite(options.graphCutLambda) || options.graphCutLambda < 0.0f ||
+                !std::isfinite(options.graphCutColorSigma) || options.graphCutColorSigma <= 0.0f) {
+                throw std::invalid_argument("Graph Cut lambda must be non-negative and color sigma must be positive");
             }
         }
 
